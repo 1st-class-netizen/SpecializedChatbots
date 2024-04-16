@@ -67,7 +67,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const chatBubbleStyle = (type: 'question' | 'response') => ({
+  const chatBubbleStyle = (type: 'question' | 'response'): React.CSSProperties => ({
     maxWidth: '80%',
     padding: '10px',
     borderRadius: '20px',
@@ -75,8 +75,9 @@ const Home: React.FC = () => {
     color: 'white',
     backgroundColor: type === 'question' ? '#90caf9' : '#a5d6a7',
     alignSelf: type === 'question' ? 'flex-start' : 'flex-end',
-    wordBreak: 'break-word',
+    wordBreak: 'break-word' as 'break-word' | 'normal' | 'keep-all' | 'break-all' // Ensuring the type matches expected CSS values
   });
+  
 
   return (
     <Container maxWidth="sm" style={{ marginTop: '20px' }}>
@@ -85,7 +86,7 @@ const Home: React.FC = () => {
       </Typography>
       <Box style={{ display: 'flex', flexDirection: 'column', maxHeight: boxHeight, overflowY: 'auto', backgroundColor: '#f0f0f0', padding: '10px', marginBottom: '20px', borderRadius: '5px' }}>
         {conversationHistory.map((item, index) => (
-          <Box key={index} style={chatBubbleStyle(item.type)} sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box key={index} style={chatBubbleStyle(item.type)}>
             <Typography variant="body1" style={{ color: '#333' }}>{item.text}</Typography>
           </Box>
         ))}
@@ -95,8 +96,8 @@ const Home: React.FC = () => {
         label="Votre question"
         variant="outlined"
         value={inputText}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setInputText(e.target.value)}
-        onKeyDown={(e: KeyboardEvent) => {
+        onChange={(e) => setInputText(e.target.value)}
+        onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendClick();
