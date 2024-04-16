@@ -1,6 +1,8 @@
 import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import Link from 'next/link';
+import CreateAssistant from './CreateAssistant';
 
 interface ChatBubble {
   type: 'question' | 'response';
@@ -77,7 +79,6 @@ const Home: React.FC = () => {
     alignSelf: type === 'question' ? 'flex-start' : 'flex-end',
     wordBreak: 'break-word' as 'break-word' | 'normal' | 'keep-all' | 'break-all' // Ensuring the type matches expected CSS values
   });
-  
 
   return (
     <Container maxWidth="sm" style={{ marginTop: '20px' }}>
@@ -113,8 +114,13 @@ const Home: React.FC = () => {
       >
         Envoyer
       </Button>
+      <Link href="/CreateAssistant" passHref>
+        <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
+          Create New Assistant
+        </Button>
+      </Link>
     </Container>
   );
-}
+};
 
 export default Home;
