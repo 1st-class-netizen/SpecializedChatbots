@@ -1,31 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 
-export default function Home() {
-  const [inputText, setInputText] = useState('');
-  const [description, setDescription] = useState(''); // State to store the loaded description
-  const [conversationHistory, setConversationHistory] = useState([]);
-  const [boxHeight, setBoxHeight] = useState('300px'); // Initialize with a default value
+interface ChatBubble {
+  type: 'question' | 'response';
+  text: string;
+}
+
+const Home: React.FC = () => {
+  const [inputText, setInputText] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
+  const [boxHeight, setBoxHeight] = useState<string>('300px');
 
   useEffect(() => {
-    // Load the description from a text file on component mount
     fetch('/description.txt')
       .then(response => response.text())
       .then(text => setDescription(text))
       .catch(err => console.error('Failed to load description:', err));
 
     const updateBoxHeight = () => {
-      // Estimate the total height of non-chat elements
-      const estimatedOtherElementsHeight = 200; // Adjust this based on your actual UI elements outside the chat box
+      const estimatedOtherElementsHeight = 200;
       const availableHeight = window.innerHeight - estimatedOtherElementsHeight;
       setBoxHeight(`${availableHeight}px`);
     };
 
-    updateBoxHeight(); // Set initial size
-    window.addEventListener('resize', updateBoxHeight); // Adjust on window resize
+    updateBoxHeight();
+    window.addEventListener('resize', updateBoxHeight);
 
-    return () => window.removeEventListener('resize', updateBoxHeight); // Clean up
+    return () => window.removeEventListener('resize', updateBoxHeight);
   }, []);
 
   const handleSendClick = async () => {
@@ -33,8 +36,8 @@ export default function Home() {
       console.log("Can't send an empty message.");
       return;
     }
-    
-    const newRequest = { type: 'question', text: inputText };
+
+    const newRequest: ChatBubble = { type: 'question', text: inputText };
     const updatedHistory = [...conversationHistory, newRequest];
 
     const requestBody = {
@@ -53,18 +56,18 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const parsedResponse = { type: 'response', text: response.data.candidates[0].content.parts.map(part => part.text).join(" ") };
+      const parsedResponse: ChatBubble = { type: 'response', text: response.data.candidates[0].content.parts.map((part: any) => part.text).join(" ") };
       setConversationHistory([...updatedHistory, parsedResponse]);
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage = { type: 'response', text: "Error fetching response" };
+      const errorMessage: ChatBubble = { type: 'response', text: "Error fetching response" };
       setConversationHistory([...updatedHistory, errorMessage]);
     } finally {
       setInputText(''); // Clear the input field after sending
     }
   };
 
-  const chatBubbleStyle = (type) => ({
+  const chatBubbleStyle = (type: 'question' | 'response') => ({
     maxWidth: '80%',
     padding: '10px',
     borderRadius: '20px',
@@ -72,7 +75,7 @@ export default function Home() {
     color: 'white',
     backgroundColor: type === 'question' ? '#90caf9' : '#a5d6a7',
     alignSelf: type === 'question' ? 'flex-start' : 'flex-end',
-    wordBreak: 'break-word', // Ensure long texts wrap inside the bubble
+    wordBreak: 'break-word',
   });
 
   return (
@@ -92,8 +95,8 @@ export default function Home() {
         label="Votre question"
         variant="outlined"
         value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        onKeyDown={(e) => {
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setInputText(e.target.value)}
+        onKeyDown={(e: KeyboardEvent) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendClick();
@@ -112,3 +115,5 @@ export default function Home() {
     </Container>
   );
 }
+
+export default Home;
