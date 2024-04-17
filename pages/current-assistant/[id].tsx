@@ -94,6 +94,11 @@ const CurrentAssistant = () => {
           <Typography variant="subtitle1">{assistant.description}</Typography>
           <Typography variant="body1">Role: {assistant.userRole}</Typography>
           <Typography variant="body1">Model Info: {assistant.modelInfo}</Typography>
+          {conversationHistory.map((bubble, index) => (
+            <Box key={index} style={{ padding: '10px', border: '1px solid black', margin: '10px 0' }}>
+              <Typography color={bubble.type === 'question' ? "primary" : "secondary"}>{bubble.text}</Typography>
+            </Box>
+          ))}
           <TextField
             fullWidth
             label="Your question"
