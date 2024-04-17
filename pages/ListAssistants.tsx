@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Button } from '@mui/material';
+import Link from 'next/link';
 
 interface Assistant {
   id: number;
@@ -12,8 +13,8 @@ interface Assistant {
 
 const ListAssistants = () => {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchAssistants = async () => {
@@ -46,6 +47,11 @@ const ListAssistants = () => {
               <Typography variant="body2">{assistant.description}</Typography>
               <Typography variant="body2">Role: {assistant.userRole}</Typography>
               <Typography variant="body2">Model: {assistant.modelInfo}</Typography>
+              <Link href={`/current-assistant/${assistant.id}`} passHref>
+                <Button variant="outlined" color="primary" style={{ marginTop: '10px' }}>
+                  View Details
+                </Button>
+              </Link>
             </Box>
           ))}
         </Box>

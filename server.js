@@ -29,6 +29,21 @@ app.get('/assistants', async (req, res) => {
   }
 });
 
+// Retrieve a specific assistant by ID
+app.get('/assistants/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const assistant = await Assistant.findByPk(id);
+    if (!assistant) {
+      return res.status(404).json({ error: 'Assistant not found' });
+    }
+    res.json(assistant);
+  } catch (error) {
+    console.error('Failed to retrieve assistant details:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
