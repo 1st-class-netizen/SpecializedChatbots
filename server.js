@@ -19,6 +19,16 @@ app.post('/assistants', async (req, res) => {
   }
 });
 
+app.get('/assistants', async (req, res) => {
+  try {
+    const assistants = await Assistant.findAll();
+    res.json(assistants);
+  } catch (error) {
+    console.error('Failed to retrieve assistants:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
