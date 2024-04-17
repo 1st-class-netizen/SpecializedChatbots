@@ -55,7 +55,7 @@ const CurrentAssistant = () => {
 
     const requestBody = {
       contents: [
-        { role: "user", parts: [{ text: assistant?.description || '' }] },
+        { role: "user", parts: [{ text: assistant?.userRole || '' }] },
         { role: "model", parts: [{ text: assistant?.modelInfo || "Default response from assistant" }] },
         { role: "user", parts: [{ text: inputText }] },
       ]
