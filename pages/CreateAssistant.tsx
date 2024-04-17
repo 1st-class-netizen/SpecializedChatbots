@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router'; // Import useRouter
 import { Container, TextField, Button, Typography } from '@mui/material';
 import axios from 'axios';
 
 const CreateAssistant = () => {
+  const router = useRouter(); // Create a router instance
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [userRole, setUserRole] = useState('');
@@ -17,7 +19,13 @@ const CreateAssistant = () => {
         modelInfo
       });
       console.log('Assistant created:', response.data);
-      // Optionally clear fields or add notifications
+      // Clear fields if needed
+      setName('');
+      setDescription('');
+      setUserRole('');
+      setModelInfo('');
+      // Redirect to ListAssistants after creation
+      router.push('/ListAssistants');
     } catch (error) {
       console.error('Error creating assistant:', error);
     }
@@ -30,7 +38,9 @@ const CreateAssistant = () => {
       <TextField fullWidth label="Description" value={description} onChange={e => setDescription(e.target.value)} margin="normal" />
       <TextField fullWidth label="User Role" value={userRole} onChange={e => setUserRole(e.target.value)} margin="normal" />
       <TextField fullWidth label="Model Info" value={modelInfo} onChange={e => setModelInfo(e.target.value)} margin="normal" />
-      <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>Create</Button>
+      <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
+        Create
+      </Button>
     </Container>
   );
 };
