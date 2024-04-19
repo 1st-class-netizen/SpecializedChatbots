@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import Link from 'next/link';
+import synthesizeSpeech from '../../services/textToSpeechService';
 
 interface Assistant {
   id: number;
@@ -49,10 +50,10 @@ const CurrentAssistant = () => {
       console.log("Can't send an empty message.");
       return;
     }
-
+  
     const newRequest: ChatBubble = { type: 'question', text: inputText };
     const updatedHistory = [...conversationHistory, newRequest];
-
+  
     const requestBody = {
       contents: [
         { role: "user", parts: [{ text: assistant?.userRole || 'Default user role' }] },
@@ -63,16 +64,29 @@ const CurrentAssistant = () => {
         }))
       ]
     };
+  
     try {
       const apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
       const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-
+  
       const response = await axios.post(`${apiUrl}?key=${apiKey}`, requestBody, {
         headers: { 'Content-Type': 'application/json' }
       });
-
+  
       const parsedResponse: ChatBubble = { type: 'response', text: response.data.candidates[0].content.parts.map((part: any) => part.text).join(" ") };
       setConversationHistory([...updatedHistory, parsedResponse]);
+  
+      synthesizeSpeech({
+        text: "Hello, this is a test",
+        voiceName: "fr-CA-Neural2-B",
+        apiKey: "AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U"
+    }).then(blob => {
+      const audioUrl = URL.createObjectURL(blob);
+      console.log(audioUrl);  // Check the URL in the browser or curl
+        const audio = new Audio(audioUrl);
+        audio.play().catch(e => console.error('Playback failed directly:', e));
+    });
+  
     } catch (error) {
       console.error('Error:', error);
       const errorMessage: ChatBubble = { type: 'response', text: "Error fetching response" };
@@ -81,7 +95,7 @@ const CurrentAssistant = () => {
       setInputText(''); // Clear the input field after sending
     }
   };
-
+  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
