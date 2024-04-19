@@ -55,12 +55,14 @@ const CurrentAssistant = () => {
 
     const requestBody = {
       contents: [
-        { role: "user", parts: [{ text: assistant?.userRole || '' }] },
-        { role: "model", parts: [{ text: assistant?.modelInfo || "Default response from assistant" }] },
-        { role: "user", parts: [{ text: inputText }] },
+        { role: "user", parts: [{ text: assistant?.userRole || 'Default user role' }] },
+        { role: "model", parts: [{ text: assistant?.modelInfo || "Default model info" }] },
+        ...conversationHistory.concat(newRequest).map(bubble => ({
+          role: bubble.type === 'question' ? "user" : "model",
+          parts: [{ text: bubble.text }]
+        }))
       ]
     };
-
     try {
       const apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
       const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
@@ -92,8 +94,6 @@ const CurrentAssistant = () => {
         <Box>
           <Typography variant="h5">{assistant.name}</Typography>
           <Typography variant="subtitle1">{assistant.description}</Typography>
-          <Typography variant="body1">Role: {assistant.userRole}</Typography>
-          <Typography variant="body1">Model Info: {assistant.modelInfo}</Typography>
           {conversationHistory.map((bubble, index) => (
             <Box key={index} style={{ padding: '10px', border: '1px solid black', margin: '10px 0' }}>
               <Typography color={bubble.type === 'question' ? "primary" : "secondary"}>{bubble.text}</Typography>
