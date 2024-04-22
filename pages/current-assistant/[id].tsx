@@ -76,16 +76,16 @@ const CurrentAssistant = () => {
       const parsedResponse: ChatBubble = { type: 'response', text: response.data.candidates[0].content.parts.map((part: any) => part.text).join(" ") };
       setConversationHistory([...updatedHistory, parsedResponse]);
   
+      // Use the latest model response for text-to-speech
       synthesizeSpeech({
-        text: "Hello, this is a test",
+        text: parsedResponse.text,
         voiceName: "fr-CA-Neural2-B",
-        apiKey: "AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U"
-    }).then(blob => {
-      const audioUrl = URL.createObjectURL(blob);
-      console.log(audioUrl);  // Check the URL in the browser or curl
+        apiKey: apiKey
+      }).then(blob => {
+        const audioUrl = URL.createObjectURL(blob);
         const audio = new Audio(audioUrl);
         audio.play().catch(e => console.error('Playback failed directly:', e));
-    });
+      });
   
     } catch (error) {
       console.error('Error:', error);
@@ -95,6 +95,7 @@ const CurrentAssistant = () => {
       setInputText(''); // Clear the input field after sending
     }
   };
+  
   
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
