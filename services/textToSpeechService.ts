@@ -26,9 +26,10 @@ const synthesizeSpeech = async ({ text, voiceName, apiKey }: TextToSpeechParams)
     }
   };
 
-  const response = await axios.post(url, requestBody, { responseType: 'arraybuffer' });
-  const audioContent = response.data;
-  const blob = new Blob([audioContent], { type: 'audio/mpeg' });
+  const response = await axios.post(url, requestBody, { responseType: 'json' });
+  const audioContentBase64 = response.data.audioContent;
+  const audioBuffer = Buffer.from(audioContentBase64, 'base64');
+  const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
   return blob;
 };
 

@@ -82,12 +82,24 @@ const CurrentAssistant = () => {
         voiceName: "fr-CA-Neural2-B",
         apiKey: apiKey
       }).then(blob => {
+        console.log(`Blob size: ${blob.size} bytes`); // Check blob size
+        if (blob.size > 0) {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = function() {
+            const base64data = reader.result;                
+            console.log(base64data); // Log base64 audio data
+          }
+        }
         const audioUrl = URL.createObjectURL(blob);
+        console.log(`Audio URL: ${audioUrl}`); // Check URL validity
         const audio = new Audio(audioUrl);
         audio.play().catch(e => console.error('Playback failed directly:', e));
+      }).catch(error => {
+        console.error('Error synthesizing speech:', error);
       });
   
-    } catch (error) {
+    } catch ( error ) {
       console.error('Error:', error);
       const errorMessage: ChatBubble = { type: 'response', text: "Error fetching response" };
       setConversationHistory([...updatedHistory, errorMessage]);
