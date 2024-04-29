@@ -31,10 +31,16 @@ const ListAssistants = () => {
   }, []);
 
   return (
+    
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom>
         List of AI Assistants
       </Typography>
+      <Link href="/CreateAssistant" passHref>
+            <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
+              Create New Assistant
+            </Button>
+          </Link>
       {loading ? (
         <Typography>Loading...</Typography>
       ) : error ? (

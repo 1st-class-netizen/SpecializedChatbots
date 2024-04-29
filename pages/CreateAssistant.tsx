@@ -41,6 +41,9 @@ const CreateAssistant = () => {
       <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
         Create
       </Button>
+      <Button variant="contained" color="primary" onClick={e => router.push('/ListAssistants')} style={{ marginTop: '20px' }}>
+        List of Assistants
+      </Button>
     </Container>
   );
 };
