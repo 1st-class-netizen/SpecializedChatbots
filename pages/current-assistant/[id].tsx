@@ -1,163 +1,61 @@
-// pages/current-assistant/[id].tsx
-import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Button } from '@mui/material';
 import Link from 'next/link';
-import synthesizeSpeech from '../../services/textToSpeechService';
-
-interface Assistant {
-  id: number;
-  name: string;
-  description: string;
-  userRole: string;
-  modelInfo: string;
-}
-
-interface ChatBubble {
-  type: 'question' | 'response';
-  text: string;
-}
+import AssistantDetails from '../../components/AssistantDetails';
+import ChatHistory from '../../components/ChatHistory';
+import InputField from '../../components/InputField';
+import { useChatBubble } from '../../hooks/useChatBubble';
+import { fetchAssistant, sendChat } from '../../utils/api';
 
 const CurrentAssistant = () => {
   const router = useRouter();
   const { id } = router.query;
-
-  const [assistant, setAssistant] = useState<Assistant | null>(null);
-  const [inputText, setInputText] = useState<string>('');
-  const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
+  const { conversationHistory, addChatBubble } = useChatBubble();
+  const [assistant, setAssistant] = useState(null);
+  const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (id) {
-      const fetchAssistant = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3001/assistants/${id}`);
-          setAssistant(response.data);
-        } catch (err) {
-          setError('Failed to fetch assistant details');
-          console.error(err);
-        }
+      fetchAssistant(id).then(data => {
+        setAssistant(data.assistant);
         setLoading(false);
-      };
-      fetchAssistant();
+      }).catch(err => {
+        setError('Failed to fetch assistant details');
+        setLoading(false);
+      });
     }
   }, [id]);
 
   const handleSendClick = async () => {
-    if (!inputText.trim()) {
-      console.log("Can't send an empty message.");
-      return;
-    }
-  
-    const newRequest: ChatBubble = { type: 'question', text: inputText };
-    const updatedHistory = [...conversationHistory, newRequest];
-  
-    const requestBody = {
-      contents: [
-        { role: "user", parts: [{ text: assistant?.userRole || 'Default user role' }] },
-        { role: "model", parts: [{ text: assistant?.modelInfo || "Default model info" }] },
-        ...conversationHistory.concat(newRequest).map(bubble => ({
-          role: bubble.type === 'question' ? "user" : "model",
-          parts: [{ text: bubble.text }]
-        }))
-      ]
-    };
-  
-    try {
-      const apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
-      const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-  
-      const response = await axios.post(`${apiUrl}?key=${apiKey}`, requestBody, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-  
-      const parsedResponse: ChatBubble = { type: 'response', text: response.data.candidates[0].content.parts.map((part: any) => part.text).join(" ") };
-      setConversationHistory([...updatedHistory, parsedResponse]);
-  
-      // Use the latest model response for text-to-speech
-      synthesizeSpeech({
-        text: parsedResponse.text,
-        voiceName: "fr-CA-Neural2-B",
-        apiKey: apiKey
-      }).then(blob => {
-        console.log(`Blob size: ${blob.size} bytes`); // Check blob size
-        if (blob.size > 0) {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = function() {
-            const base64data = reader.result;                
-            console.log(base64data); // Log base64 audio data
-          }
-        }
-        const audioUrl = URL.createObjectURL(blob);
-        console.log(`Audio URL: ${audioUrl}`); // Check URL validity
-        const audio = new Audio(audioUrl);
-        audio.play().catch(e => console.error('Playback failed directly:', e));
-      }).catch(error => {
-        console.error('Error synthesizing speech:', error);
-      });
-  
-    } catch ( error ) {
-      console.error('Error:', error);
-      const errorMessage: ChatBubble = { type: 'response', text: "Error fetching response" };
-      setConversationHistory([...updatedHistory, errorMessage]);
-    } finally {
-      setInputText(''); // Clear the input field after sending
+    const response = await sendChat(inputText, assistant, addChatBubble, conversationHistory);
+    if (response && response.error) {
+      setError(response.error);
+    } else {
+      setInputText('');
+      // Play the audio using the URL returned from synthesizeSpeech
+      if (response.audioUrl) {
+        const audio = new Audio(response.audioUrl);
+        audio.play().catch(e => console.error('Playback error:', e));
+      }
     }
   };
-  
-  
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Assistant Details - {assistant?.name}
-      </Typography>
+      <Typography variant="h4" gutterBottom>Assistant Details - {assistant?.name}</Typography>
       {assistant && (
         <Box>
-          <Typography variant="h5">{assistant.name}</Typography>
-          <Typography variant="subtitle1">{assistant.description}</Typography>
-          {conversationHistory.map((bubble, index) => (
-            <Box key={index} style={{ padding: '10px', border: '1px solid black', margin: '10px 0' }}>
-              <Typography color={bubble.type === 'question' ? "primary" : "secondary"}>{bubble.text}</Typography>
-            </Box>
-          ))}
-          <TextField
-            fullWidth
-            label="Your question"
-            variant="outlined"
-            value={inputText}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setInputText(e.target.value)}
-            onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendClick();
-              }
-            }}
-            margin="normal"
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSendClick}
-            style={{ marginBottom: '20px' }}
-          >
-            Send
-          </Button>
-          <Link href="/ListAssistants" passHref>
-            <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
-              Back to List
-            </Button>
-          </Link>
-          <Link href="/CreateAssistant" passHref>
-            <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
-              Create New Assistant
-            </Button>
-          </Link>
+          <AssistantDetails assistant={assistant} />
+          <ChatHistory conversationHistory={conversationHistory} />
+          <InputField inputText={inputText} setInputText={setInputText} handleSendClick={handleSendClick} />
+          <Link href="/ListAssistants" passHref><Button variant="contained" color="secondary">Back to List</Button></Link>
+          <Link href="/CreateAssistant" passHref><Button variant="contained" color="secondary">Create New Assistant</Button></Link>
         </Box>
       )}
     </Container>
