@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Container, Typography, Box, Button } from '@mui/material';
+import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 import AssistantDetails from '../../components/AssistantDetails';
 import ChatHistory from '../../components/ChatHistory';
@@ -16,6 +16,7 @@ const CurrentAssistant = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [audioUrl, setAudioUrl] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -24,6 +25,7 @@ const CurrentAssistant = () => {
         setLoading(false);
       }).catch(err => {
         setError('Failed to fetch assistant details');
+        console.error(err);
         setLoading(false);
       });
     }
@@ -35,8 +37,8 @@ const CurrentAssistant = () => {
       setError(response.error);
     } else {
       setInputText('');
-      // Play the audio using the URL returned from synthesizeSpeech
       if (response.audioUrl) {
+        setAudioUrl(response.audioUrl);
         const audio = new Audio(response.audioUrl);
         audio.play().catch(e => console.error('Playback error:', e));
       }
