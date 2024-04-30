@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Button } from '@mui/material';
 import Link from 'next/link';
 import AssistantDetails from '../../components/AssistantDetails';
 import ChatHistory from '../../components/ChatHistory';
 import InputField from '../../components/InputField';
+import AudioPlayer from '../../components/AudioPlayer';
 import { useChatBubble } from '../../hooks/useChatBubble';
 import { fetchAssistant, sendChat } from '../../utils/api';
 
@@ -39,8 +40,6 @@ const CurrentAssistant = () => {
       setInputText('');
       if (response.audioUrl) {
         setAudioUrl(response.audioUrl);
-        const audio = new Audio(response.audioUrl);
-        audio.play().catch(e => console.error('Playback error:', e));
       }
     }
   };
@@ -58,6 +57,7 @@ const CurrentAssistant = () => {
           <InputField inputText={inputText} setInputText={setInputText} handleSendClick={handleSendClick} />
           <Link href="/ListAssistants" passHref><Button variant="contained" color="secondary">Back to List</Button></Link>
           <Link href="/CreateAssistant" passHref><Button variant="contained" color="secondary">Create New Assistant</Button></Link>
+          {audioUrl && <AudioPlayer src={audioUrl} />}
         </Box>
       )}
     </Container>
