@@ -1,52 +1,80 @@
-//pages/CreateAssistant.tsx
+// Import necessary libraries:
+// - React: for building user interfaces
+// - useState: for managing state within the component
+// - useRouter: for navigating between pages in Next.js
+// - Material UI components: for styling the interface
+// - axios: for making HTTP requests to interact with the backend API
 import React, { useState } from 'react';
-import { useRouter } from 'next/router'; // Import useRouter
+import { useRouter } from 'next/router'; 
 import { Container, TextField, Button, Typography } from '@mui/material';
 import axios from 'axios';
 
+// Define the main component called CreateAssistant
 const CreateAssistant = () => {
-  const router = useRouter(); // Create a router instance
-  const [name, setName] = useState('');
+  // Create a router instance to handle navigation
+  const router = useRouter(); 
+
+  // Use useState to create variables for storing user input:
+  // - name: stores the assistant's name
+  // - description: stores the assistant's description
+  // - userRole: stores the assistant's role or purpose
+  // - modelInfo: stores information about the AI model used
+  const [name, setName] = useState(''); 
   const [description, setDescription] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [modelInfo, setModelInfo] = useState('');
+  const [modelInfo, setModelInfo] = useState(''); 
 
-  const handleSubmit = async () => {
+  // This function handles the form submission when the "Create" button is clicked
+  const handleSubmit = async () => { 
+    // Try to send a POST request to the API to create a new assistant
     try {
-      const response = await axios.post('http://localhost:3001/assistants', {
-        name,
+      const response = await axios.post('http://localhost:3001/assistants', { 
+        name,        // Include the user input values in the request
         description,
         userRole,
         modelInfo
       });
-      console.log('Assistant created:', response.data);
-      // Clear fields if needed
-      setName('');
+
+      // Log the response data (the newly created assistant) to the console
+      console.log('Assistant created:', response.data); 
+
+      // Clear the input fields after successful creation
+      setName('');    
       setDescription('');
-      setUserRole('');
+      setUserRole(''); 
       setModelInfo('');
-      // Redirect to ListAssistants after creation
-      router.push('/');
+
+      // Redirect the user to the ListAssistants page after creating the assistant
+      router.push('/'); 
     } catch (error) {
-      console.error('Error creating assistant:', error);
+      // Log any errors that occur during the process
+      console.error('Error creating assistant:', error); 
     }
   };
 
+  // This part defines the user interface of the component
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm"> 
+      {/* Display a heading for the page */}
       <Typography variant="h4" gutterBottom>Create New AI Assistant</Typography>
-      <TextField fullWidth label="Name" value={name} onChange={e => setName(e.target.value)} margin="normal" />
-      <TextField fullWidth label="Description" value={description} onChange={e => setDescription(e.target.value)} margin="normal" />
-      <TextField fullWidth label="User Role" value={userRole} onChange={e => setUserRole(e.target.value)} margin="normal" />
-      <TextField fullWidth label="Model Info" value={modelInfo} onChange={e => setModelInfo(e.target.value)} margin="normal" />
-      <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
+
+      {/* Create text fields for user input: */}
+      {/* Each field has a label, value, and onChange handler to update the corresponding state variable */}
+      <TextField fullWidth label="Name" value={name} onChange={e => setName(e.target.value)} margin="normal" /> 
+      <TextField fullWidth label="Description" value={description} onChange={e => setDescription(e.target.value)} margin="normal" />       
+      <TextField fullWidth label="User Role" value={userRole} onChange={e => setUserRole(e.target.value)} margin="normal" />       
+      <TextField fullWidth label="Model Info" value={modelInfo} onChange={e => setModelInfo(e.target.value)} margin="normal" />       
+
+      {/* Create buttons for submitting the form and navigating to the list of assistants */}
+      <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}> 
         Create
       </Button>
-      <Button variant="contained" color="primary" onClick={e => router.push('/')} style={{ marginTop: '20px' }}>
+      <Button variant="contained" color="primary" onClick={e => router.push('/')} style={{ marginTop: '20px' }}> 
         List of Assistants
       </Button>
     </Container>
   );
 };
 
+// Export the CreateAssistant component for use in other parts of the application
 export default CreateAssistant;
