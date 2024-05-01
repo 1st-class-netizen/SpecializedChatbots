@@ -1,3 +1,5 @@
+//pages/current-assistant/[id].tsx
+
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Typography, Box, Button } from '@mui/material';
@@ -55,7 +57,7 @@ const CurrentAssistant = () => {
           <AssistantDetails assistant={assistant} />
           <ChatHistory conversationHistory={conversationHistory} />
           <InputField inputText={inputText} setInputText={setInputText} handleSendClick={handleSendClick} />
-          <Link href="/ListAssistants" passHref><Button variant="contained" color="secondary">Back to List</Button></Link>
+          <Link href="/" passHref><Button variant="contained" color="secondary">Back to List</Button></Link>
           <Link href="/CreateAssistant" passHref><Button variant="contained" color="secondary">Create New Assistant</Button></Link>
           {audioUrl && <AudioPlayer src={audioUrl} />}
         </Box>

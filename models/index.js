@@ -1,3 +1,4 @@
+//models/index.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
