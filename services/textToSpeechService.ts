@@ -1,4 +1,5 @@
-// services/textToSpeechService.ts
+//services/textToSpeechService.ts
+
 import axios from 'axios';
 
 interface TextToSpeechParams {
@@ -7,7 +8,7 @@ interface TextToSpeechParams {
   apiKey: string;
 }
 
-const synthesizeSpeech = async ({ text, voiceName, apiKey }: TextToSpeechParams): Promise<Blob> => {
+const synthesizeSpeech = async ({ text, voiceName, apiKey }: TextToSpeechParams): Promise<string> => {
   const url = `https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${apiKey}`;
   const requestBody = {
     input: { text },
@@ -17,20 +18,32 @@ const synthesizeSpeech = async ({ text, voiceName, apiKey }: TextToSpeechParams)
       ssmlGender: "MALE"
     },
     audioConfig: {
-      audioEncoding: "MP3",
-      speakingRate: 1,
-      pitch: 0,
-      volumeGainDb: 0,
-      sampleRateHertz: 24000,
-      effectsProfileId: []
+      audioEncoding: "MP3"
     }
   };
 
   const response = await axios.post(url, requestBody, { responseType: 'json' });
   const audioContentBase64 = response.data.audioContent;
-  const audioBuffer = Buffer.from(audioContentBase64, 'base64');
-  const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
-  return blob;
+  const audioBlob = base64ToBlob(audioContentBase64, 'audio/mp3');
+  return URL.createObjectURL(audioBlob);
 };
+
+function base64ToBlob(base64, mimeType) {
+  const byteCharacters = atob(base64.replace(/^data:audio\/mp3;base64,/, ''));
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    const slice = byteCharacters.slice(offset, offset + 512);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: mimeType });
+  return blob;
+}
 
 export default synthesizeSpeech;

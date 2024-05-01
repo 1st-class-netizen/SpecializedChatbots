@@ -1,3 +1,4 @@
+//pages/CreateAssistant.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router'; // Import useRouter
 import { Container, TextField, Button, Typography } from '@mui/material';
@@ -25,7 +26,7 @@ const CreateAssistant = () => {
       setUserRole('');
       setModelInfo('');
       // Redirect to ListAssistants after creation
-      router.push('/ListAssistants');
+      router.push('/');
     } catch (error) {
       console.error('Error creating assistant:', error);
     }
@@ -40,6 +41,9 @@ const CreateAssistant = () => {
       <TextField fullWidth label="Model Info" value={modelInfo} onChange={e => setModelInfo(e.target.value)} margin="normal" />
       <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
         Create
+      </Button>
+      <Button variant="contained" color="primary" onClick={e => router.push('/')} style={{ marginTop: '20px' }}>
+        List of Assistants
       </Button>
     </Container>
   );
