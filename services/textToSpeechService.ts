@@ -1,3 +1,10 @@
+//services/textToSpeechService.ts
+
+// This module provides a service for converting text into spoken audio using Google's Text-to-Speech API.
+// It defines a function, synthesizeSpeech, that takes text, voice settings, and an API key, then returns a URL pointing to the spoken audio.
+// This is especially useful for applications requiring auditory feedback or for accessibility purposes.
+// The service encapsulates the complexities of interacting with an external API and processing audio data.
+
 // Import axios for making HTTP requests to the Text-to-Speech API
 import axios from 'axios';
 

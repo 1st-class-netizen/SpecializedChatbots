@@ -1,3 +1,26 @@
+// components/AudioPlayer.tsx
+
+/**
+ * Overview of AudioPlayer Component:
+ *
+ * The AudioPlayer component is a specialized React component that manages the playback of audio
+ * files. It does not render any visible UI elements but controls audio through the browser's 
+ * Audio API. This component is an example of an "invisible" component that purely handles logic
+ * and side effects, a common pattern in React for encapsulating functionalities like audio
+ * management, timers, or external data fetching.
+ *
+ * Key Concepts Demonstrated:
+ * - useRef: This React hook is used to create a reference to a DOM element or a JavaScript object
+ *   that persists for the life of the component. Here, it's used to hold a reference to an Audio object.
+ * - useEffect: This hook lets you perform side effects in function components. For the AudioPlayer,
+ *   it manages the lifecycle of playing and stopping audio in response to changes in the source URL.
+ * - Audio API: Shows how to interact with the Web Audio API by creating, playing, and pausing an audio
+ *   stream, which is central to applications needing audio capabilities.
+ *
+ * This component is a practical demonstration of managing resources in a React application, emphasizing
+ * how components can encapsulate functionality and manage resource lifecycles cleanly.
+ */
+
 // Import necessary libraries:
 // - React: for building user interfaces
 // - useEffect and useRef: for managing side effects and accessing DOM elements
@@ -15,7 +38,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   // useEffect to handle playing the audio when the src prop changes
   useEffect(() => {
-    if (!src) return; // If there's no src, do nothing
+    if (!src) return; // Early exit if no source is provided.
 
     // If the audio element hasn't been created yet, create it
     if (!audioRef.current) audioRef.current = new Audio(src); 

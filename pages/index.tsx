@@ -1,3 +1,15 @@
+//pages/index.tsx
+
+/**
+ * This file defines the ListAssistants component, which is responsible for fetching
+ * and displaying a list of AI Assistants from a backend server. This component
+ * showcases how to use React hooks for state management and side effects, how to
+ * handle asynchronous data fetching with Axios, and how to dynamically generate
+ * user interface elements using Material-UI components. The goal is to provide an
+ * introductory understanding of building a simple React/Typescript application that interacts
+ * with an API and displays the data in a user-friendly format.
+ */
+
 // This line imports React library and some specific functionalities:
 // - useState: allows us to manage state (variables) within the component
 // - useEffect: allows us to perform actions after the component renders
