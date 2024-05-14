@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
+
+
 interface ChatBubble {
   type: 'question' | 'response';
   text: string;

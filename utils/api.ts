@@ -22,7 +22,11 @@
 // - synthesizeSpeech: a custom function from textToSpeechService for converting text to speech
 import axios from 'axios';
 import synthesizeSpeech from '../services/textToSpeechService';
+import dotenv from 'dotenv';
+require('dotenv').config();
 
+console.log("APIKEY: " + process.env.REACT_APP_GOOGLE_CLOUD_API_KEY);
+let apiKey :string = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
 // Function to fetch details of a specific assistant based on its ID
 export const fetchAssistant = async (id) => {
   // Send a GET request to the API endpoint with the assistant ID
@@ -56,7 +60,6 @@ export const sendChat = async (inputText, assistant, addChatBubble, conversation
   // Try to send the request to the generative language API
   try {
     // Set API key and URL for the generative language API
-    const apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U'; 
     const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
     // Send a POST request with the prepared body and headers
     const response = await axios.post(`${apiUrl}?key=${apiKey}`, requestBody, { 
