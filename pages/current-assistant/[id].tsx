@@ -21,7 +21,7 @@ const CurrentAssistant = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(''); 
   const [audioUrl, setAudioUrl] = useState(''); 
-  const [dataArray, setDataArray] = useState<Uint8Array>(new Uint8Array(128)); // State to hold amplitude data
+  const [dataArray, setDataArray] = useState(new Uint8Array(128)); // State to hold amplitude data
 
   useEffect(() => {
     if (id) {

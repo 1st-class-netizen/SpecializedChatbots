@@ -9,12 +9,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onAudioData }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
-    // Ensure the audio element and context are initialized only once
     if (!audioRef.current) {
-      const audio = new Audio();
+      const audio = new Audio(src);
       audioRef.current = audio;
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioContextRef.current = audioContext;
@@ -26,40 +24,34 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onAudioData }) => {
       const source = audioContext.createMediaElementSource(audio);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-      sourceRef.current = source;
     }
 
-    // Set the source URL every time it changes
-    if (audioRef.current.src !== src) {
-      audioRef.current.src = src;
-    }
-
-    const audio = audioRef.current;
-    const analyser = analyserRef.current!;
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-    const updateAudioData = () => {
-      analyser.getByteFrequencyData(dataArray);
-      onAudioData(dataArray);
-      requestAnimationFrame(updateAudioData);
+    const fetchData = () => {
+      if (analyserRef.current) {
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
+        onAudioData(new Uint8Array(dataArray)); // Create a new Uint8Array from the data to ensure a new reference
+      }
+      requestAnimationFrame(fetchData);
     };
 
-    audio.play().catch(e => console.error('Playback error:', e));
-    updateAudioData();
+    audioRef.current.play().catch(e => console.error('Playback error:', e));
+    fetchData();
 
     return () => {
-      audio.pause();
-      audio.src = '';
-      // Cleanup should also reset the audio element to ensure no references are held
-      audioRef.current = null;
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = ''; // Clear the source
       }
+      if (audioContextRef.current) {
+        audioContextRef.current.close(); // Close the AudioContext
+      }
+      // Nullify the references to ensure cleanup
+      audioRef.current = null;
+      audioContextRef.current = null;
       analyserRef.current = null;
-      sourceRef.current = null;
     };
-  }, [src, onAudioData]);
+  }, [src, onAudioData]);  // Dependencies include src and onAudioData to handle updates correctly
 
   return null;
 };
