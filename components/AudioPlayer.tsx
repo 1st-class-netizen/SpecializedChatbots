@@ -12,17 +12,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onAudioData }) => {
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
-    if (!src) return;
-
+    // Ensure the audio element and context are initialized only once
     if (!audioRef.current) {
-      audioRef.current = new Audio(src);
-    } else {
-      audioRef.current.src = src;
-    }
-
-    const audio = audioRef.current;
-
-    if (!audioContextRef.current) {
+      const audio = new Audio();
+      audioRef.current = audio;
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioContextRef.current = audioContext;
 
@@ -33,11 +26,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onAudioData }) => {
       const source = audioContext.createMediaElementSource(audio);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-
       sourceRef.current = source;
     }
 
-    const analyser = analyserRef.current;
+    // Set the source URL every time it changes
+    if (audioRef.current.src !== src) {
+      audioRef.current.src = src;
+    }
+
+    const audio = audioRef.current;
+    const analyser = analyserRef.current!;
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
     const updateAudioData = () => {
@@ -52,6 +50,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onAudioData }) => {
     return () => {
       audio.pause();
       audio.src = '';
+      // Cleanup should also reset the audio element to ensure no references are held
+      audioRef.current = null;
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;
