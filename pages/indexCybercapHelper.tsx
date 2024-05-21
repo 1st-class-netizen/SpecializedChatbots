@@ -13,28 +13,49 @@ class ChatApp {
   constructor() {
     this.description = '';
     this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
-    this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
   }
 
   async fetchDescription(): Promise<void> {
     try {
       const response = await fetch('/description.txt');
-      this.description = await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const text = await response.text();
+      this.description = text;
+      console.log('Description loaded:', this.description); // Log to confirm the content
     } catch (err) {
       console.error('Failed to load description:', err);
     }
   }
 
+  escapeString(str: string): string {
+    return str.replace(/\\/g, '\\\\')
+              .replace(/"/g, '\\"')
+              .replace(/'/g, "\\'")
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r')
+              .replace(/\t/g, '\\t');
+  }
+
   async sendMessage(inputText: string, conversationHistory: ChatBubble[]): Promise<string> {
+    const escapedDescription = this.escapeString(this.description);
+    const escapedInputText = this.escapeString(inputText);
+    const escapedHistory = conversationHistory.map(bubble => ({
+      ...bubble,
+      text: this.escapeString(bubble.text)
+    }));
+
     const requestBody = {
       contents: [
-        { role: "user", parts: [{ text: this.description }] },
+        { role: "user", parts: [{ text: escapedDescription }] },
         { role: "model", parts: [{ text: "Je suis votre aide Cybercap et je répond à toutes vos questions en lien avec Cybercap." }] },
-        ...conversationHistory.map(bubble => ({
+        ...escapedHistory.map(bubble => ({
           role: bubble.type === 'question' ? "user" : "model",
           parts: [{ text: bubble.text }]
         })),
-        { role: "user", parts: [{ text: inputText }] },
+        { role: "user", parts: [{ text: escapedInputText }] },
       ]
     };
 
@@ -46,6 +67,12 @@ class ChatApp {
       });
 
       const data = await response.json();
+      console.log('API response:', data); // Log the entire response for debugging
+
+      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+        throw new Error('Invalid API response structure');
+      }
+
       const responseText = data.candidates[0].content.parts.map((part: any) => part.text).join(" ");
       return responseText;
     } catch (error) {
@@ -60,10 +87,14 @@ const Home: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
   const [boxHeight, setBoxHeight] = useState<string>('300px');
-  const chatApp = new ChatApp();
+  const [chatApp, setChatApp] = useState<ChatApp | null>(null);
 
   useEffect(() => {
-    chatApp.fetchDescription().then(() => setDescription(chatApp.description));
+    const app = new ChatApp();
+    app.fetchDescription().then(() => {
+      setDescription(app.description);
+      setChatApp(app);
+    });
 
     const updateBoxHeight = () => {
       const estimatedOtherElementsHeight = 200;
@@ -80,6 +111,11 @@ const Home: React.FC = () => {
   const handleSendClick = async () => {
     if (!inputText.trim()) {
       console.log("Can't send an empty message.");
+      return;
+    }
+
+    if (!chatApp) {
+      console.log("Chat app is not initialized.");
       return;
     }
 
