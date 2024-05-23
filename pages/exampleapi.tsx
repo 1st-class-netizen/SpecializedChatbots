@@ -1,29 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-class Chatbot {
-  username: string;
-  message: string;
-
-  constructor(username: string, message: string) {
-    this.username = username;
-    this.message = message;
-  }
-
-  static randomResponse(): string {
-    const responses = [
-      'Bonjour! Comment puis-je vous aider aujourd\'hui?',
-      'Bien sûr, je peux vous aider avec ça.',
-      'Merci de votre question, je vais vérifier cela.',
-      'Au revoir! Passez une excellente journée!'
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
-  }
-
-  printMessage(): string {
-    return `${this.username} dit: ${this.message}`;
-  }
-}
-
 interface ChatBubble {
   type: 'question' | 'response';
   text: string;
@@ -32,20 +8,40 @@ interface ChatBubble {
 class ChatApp {
   apiKey: string;
   apiUrl: string;
+  assistantPurpose: string;
 
   constructor() {
     this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
     this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+    this.assistantPurpose = "Je suis votre aide Cybercap et je répond à toutes vos questions en lien avec Cybercap.";
+  }
+
+  escapeString(str: string): string {
+    return str.replace(/\\/g, '\\\\')
+              .replace(/"/g, '\\"')
+              .replace(/'/g, "\\'")
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r')
+              .replace(/\t/g, '\\t');
   }
 
   async sendMessage(inputText: string, conversationHistory: ChatBubble[]): Promise<string> {
+    const escapedPurpose = this.escapeString(this.assistantPurpose);
+    const escapedInputText = this.escapeString(inputText);
+    const escapedHistory = conversationHistory.map(bubble => ({
+      ...bubble,
+      text: this.escapeString(bubble.text)
+    }));
+
     const requestBody = {
       contents: [
-        ...conversationHistory.map(bubble => ({
-          role: bubble.type === 'question' ? 'user' : 'model',
+        { role: "user", parts: [{ text: escapedPurpose }] },
+        { role: "model", parts: [{ text: "Je suis votre aide Cybercap et je répond à toutes vos questions en lien avec Cybercap." }] },
+        ...escapedHistory.map(bubble => ({
+          role: bubble.type === 'question' ? "user" : "model",
           parts: [{ text: bubble.text }]
         })),
-        { role: 'user', parts: [{ text: inputText }] },
+        { role: "user", parts: [{ text: escapedInputText }] },
       ]
     };
 
@@ -96,17 +92,15 @@ const Example: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== '') {
-      const userMessage = new Chatbot('Utilisateur', inputValue);
       const newUserMessage: ChatBubble = { type: 'question', text: inputValue };
 
-      setMessages((prevMessages) => [...prevMessages, userMessage.printMessage()]);
+      setMessages((prevMessages) => [...prevMessages, `Utilisateur dit: ${inputValue}`]);
       setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]);
 
       const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]);
-      const botMessage = new Chatbot('Chatbot', responseText);
       const newBotMessage: ChatBubble = { type: 'response', text: responseText };
 
-      setMessages((prevMessages) => [...prevMessages, botMessage.printMessage()]);
+      setMessages((prevMessages) => [...prevMessages, `Chatbot dit: ${responseText}`]);
       setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]);
 
       setInputValue('');
