@@ -68,7 +68,7 @@ class ChatApp {
   }
 }
 
-const Example: React.FC = () => {
+const ChatBotSimpleApi: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
@@ -121,4 +121,4 @@ const Example: React.FC = () => {
   );
 };
 
-export default Example;
+export default ChatBotSimpleApi;
