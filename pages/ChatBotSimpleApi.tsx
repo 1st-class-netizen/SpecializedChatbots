@@ -15,7 +15,7 @@ class ChatApp {
 
   constructor() {
     // Initialisation de la clé API
-    this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
+    this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U'; // Utilise la clé API à partir des variables d'environnement
     // Initialisation de l'URL de l'API
     this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
     // Définition du but de l'assistant
@@ -107,13 +107,13 @@ const ChatBotSimpleApi: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, newUserMessage]); // Ajoute le message utilisateur à la liste des messages
       setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]); // Ajoute le message utilisateur à l'historique de la conversation
 
+      setInputValue(''); // Réinitialise la valeur de l'input utilisateur avant l'envoi du message
+
       const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]); // Envoie le message à l'API et récupère la réponse
       const newBotMessage: ChatBubble = { type: 'response', text: responseText }; // Crée un nouvel objet ChatBubble pour la réponse du chatbot
 
       setMessages((prevMessages) => [...prevMessages, newBotMessage]); // Ajoute la réponse du chatbot à la liste des messages
       setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]); // Ajoute la réponse du chatbot à l'historique de la conversation
-
-      setInputValue(''); // Réinitialise la valeur de l'input utilisateur
     }
   };
 
@@ -130,7 +130,8 @@ const ChatBotSimpleApi: React.FC = () => {
 
   // Fonction pour afficher le texte avec Markdown
   const renderMarkdown = (text: string) => {
-    const html = marked(text); // Convertit le texte Markdown en HTML
+    // Parse the Markdown text into HTML
+    const html = marked(text);
     return { __html: html }; // Retourne un objet avec le HTML pour l'injection sécurisée
   };
 
@@ -203,15 +204,15 @@ const styles = {
   userBubble: {
     backgroundColor: '#e1ffc7',
     borderRadius: '10px',
-    padding: '10px',
-    margin: '5px',
+    padding: '2px 5px', // Further reduced padding
+    margin: '2px 0', // Reduced margin
     alignSelf: 'flex-end',
   },
   botBubble: {
     backgroundColor: '#f1f0f0',
     borderRadius: '10px',
-    padding: '10px',
-    margin: '5px',
+    padding: '2px 5px', // Further reduced padding
+    margin: '2px 0', // Reduced margin
     alignSelf: 'flex-start',
   },
 };
