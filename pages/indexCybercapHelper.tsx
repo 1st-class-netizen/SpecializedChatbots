@@ -135,7 +135,7 @@ const Home: React.FC = () => {
     marginBottom: '10px',
     color: 'white',
     backgroundColor: type === 'question' ? '#90caf9' : '#a5d6a7',
-    alignSelf: type === 'question' ? 'flex-start' : 'flex-end',
+    alignSelf: type === 'question' ? 'flex-end' : 'flex-start', // Swap the alignment
     wordBreak: 'break-word' as const
   });
 
