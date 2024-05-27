@@ -90,6 +90,7 @@ const ChatBotSimpleApi: React.FC = () => {
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]); // État pour stocker l'historique de la conversation
   const chatApp = new ChatApp(); // Instance de la classe ChatApp
   const messagesEndRef = useRef<HTMLDivElement>(null); // Référence pour l'élément de fin de messages
+  const containerRef = useRef<HTMLDivElement>(null); // Référence pour le conteneur du chatbot
 
   // Effet pour mettre à jour l'affichage des messages et faire défiler vers le bas
   useEffect(() => {
@@ -135,8 +136,34 @@ const ChatBotSimpleApi: React.FC = () => {
     return { __html: html }; // Retourne un objet avec le HTML pour l'injection sécurisée
   };
 
+  // Fonction pour gérer le redimensionnement du conteneur
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const container = containerRef.current;
+    if (container) {
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startWidth = container.offsetWidth;
+      const startHeight = container.offsetHeight;
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const newWidth = startWidth + (e.clientX - startX);
+        const newHeight = startHeight + (e.clientY - startY);
+        container.style.width = `${newWidth}px`;
+        container.style.height = `${newHeight}px`;
+      };
+
+      const handleMouseUp = () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+  };
+
   return (
-    <div style={styles.container}> {/* Ajoute le style pour le conteneur du chatbot */}
+    <div ref={containerRef} style={styles.container} onMouseDown={handleMouseDown}> {/* Ajoute le style pour le conteneur du chatbot */}
       <div style={styles.header}>Support Assistant</div> {/* Ajoute un en-tête pour le chatbot */}
       <div style={styles.messages} id="messages"> {/* Conteneur pour afficher les messages */}
         {messages.map((msg, index) => (
@@ -165,11 +192,14 @@ const styles = {
     bottom: '20px',
     right: '20px',
     width: '300px',
+    height: '400px', // Initial height
     backgroundColor: 'white',
     boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
     borderRadius: '8px',
     padding: '10px',
     zIndex: 1000,
+    resize: 'both', // Make it resizable
+    overflow: 'auto', // Handle overflow
   },
   header: {
     fontWeight: 'bold' as 'bold',
@@ -177,7 +207,7 @@ const styles = {
     marginBottom: '10px',
   },
   messages: {
-    maxHeight: '300px',
+    maxHeight: 'calc(100% - 80px)', // Adjust according to header and input heights
     overflowY: 'auto' as 'auto',
     marginBottom: '10px',
     display: 'flex',
