@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; // Importation des hooks React
+import React, { useEffect, useRef, useState } from 'react'; // Importation des hooks React
 
 // Interface qui définit la structure des messages du chat
 interface ChatBubble {
@@ -88,25 +88,14 @@ const ChatBotSimpleApi: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>(''); // État pour stocker la valeur de l'input utilisateur
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]); // État pour stocker l'historique de la conversation
   const chatApp = new ChatApp(); // Instance de la classe ChatApp
+  const messagesEndRef = useRef<HTMLDivElement>(null); // Référence pour l'élément de fin de messages
 
-  // Effet pour mettre à jour l'affichage des messages
+  // Effet pour mettre à jour l'affichage des messages et faire défiler vers le bas
   useEffect(() => {
-    const messageList = document.createElement('ul'); // Crée un élément de liste non ordonnée
-
-    // Ajoute chaque message à la liste
-    messages.forEach((msg) => {
-      const messageItem = document.createElement('li'); // Crée un élément de liste
-      messageItem.textContent = msg; // Définit le texte de l'élément de liste
-      messageList.appendChild(messageItem); // Ajoute l'élément de liste à la liste non ordonnée
-    });
-
-    // Ajoute la liste des messages au DOM
-    document.getElementById('messages')?.appendChild(messageList);
-
-    // Nettoie la liste des messages quand le composant est démonté
-    return () => {
-      document.getElementById('messages')?.removeChild(messageList); // Supprime la liste des messages du DOM
-    };
+    const messagesDiv = document.getElementById('messages');
+    if (messagesDiv) {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Faire défiler vers le bas lorsque de nouveaux messages sont ajoutés
+    }
   }, [messages]); // Exécute cet effet chaque fois que 'messages' change
 
   // Fonction pour gérer l'envoi des messages
@@ -141,7 +130,12 @@ const ChatBotSimpleApi: React.FC = () => {
   return (
     <div style={styles.container}> {/* Ajoute le style pour le conteneur du chatbot */}
       <div style={styles.header}>Support Assistant</div> {/* Ajoute un en-tête pour le chatbot */}
-      <div style={styles.messages} id="messages"></div> {/* Conteneur pour afficher les messages */}
+      <div style={styles.messages} id="messages"> {/* Conteneur pour afficher les messages */}
+        {messages.map((msg, index) => (
+          <div key={index}>{msg}</div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
       <div style={styles.inputContainer}> {/* Conteneur pour l'input et le bouton */}
         <input
           type="text" // Définit le type de l'input comme texte
