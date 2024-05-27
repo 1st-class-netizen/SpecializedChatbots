@@ -127,18 +127,78 @@ const ChatBotSimpleApi: React.FC = () => {
     }
   };
 
+  // Fonction pour gérer la pression des touches dans l'input
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) { // Si "Enter" est pressé sans "Shift"
+      e.preventDefault(); // Empêche le comportement par défaut (nouvelle ligne)
+      handleSendMessage(); // Envoie le message
+    } else if (e.key === 'Enter' && e.shiftKey) { // Si "Shift+Enter" est pressé
+      e.preventDefault(); // Empêche le comportement par défaut
+      setInputValue(inputValue + '\n'); // Ajoute une nouvelle ligne dans l'input
+    }
+  };
+
   return (
-    <div>
-      <input
-        type="text" // Définit le type de l'input comme texte
-        value={inputValue} // Associe l'état inputValue à la valeur de l'input
-        onChange={(e) => setInputValue(e.target.value)} // Met à jour inputValue lorsque l'utilisateur tape
-        placeholder="Entrez votre message ici" // Texte d'espace réservé dans l'input
-      />
-      <button onClick={handleSendMessage}>Envoyer</button> // Bouton pour envoyer le message
-      <div id="messages"></div> // Conteneur pour afficher les messages
+    <div style={styles.container}> {/* Ajoute le style pour le conteneur du chatbot */}
+      <div style={styles.header}>Support Assistant</div> {/* Ajoute un en-tête pour le chatbot */}
+      <div style={styles.messages} id="messages"></div> {/* Conteneur pour afficher les messages */}
+      <div style={styles.inputContainer}> {/* Conteneur pour l'input et le bouton */}
+        <input
+          type="text" // Définit le type de l'input comme texte
+          value={inputValue} // Associe l'état inputValue à la valeur de l'input
+          onChange={(e) => setInputValue(e.target.value)} // Met à jour inputValue lorsque l'utilisateur tape
+          onKeyDown={handleKeyPress} // Gère la pression des touches
+          placeholder="Entrez votre message ici" // Texte d'espace réservé dans l'input
+          style={styles.input} // Applique le style à l'input
+        />
+        <button onClick={handleSendMessage} style={styles.button}>Envoyer</button> {/* Bouton pour envoyer le message */}
+      </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    position: 'fixed' as 'fixed',
+    bottom: '20px',
+    right: '20px',
+    width: '300px',
+    backgroundColor: 'white',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    padding: '10px',
+    zIndex: 1000,
+  },
+  header: {
+    fontWeight: 'bold' as 'bold',
+    textAlign: 'center' as 'center',
+    marginBottom: '10px',
+  },
+  messages: {
+    maxHeight: '300px',
+    overflowY: 'auto' as 'auto',
+    marginBottom: '10px',
+  },
+  inputContainer: {
+    display: 'flex' as 'flex',
+  },
+  input: {
+    flex: 1,
+    padding: '5px',
+    border: '1px solid #ccc',
+    borderRadius: '4px 0 0 4px',
+  },
+  button: {
+    padding: '5px 10px',
+    border: 'none',
+    backgroundColor: '#007bff',
+    color: 'white',
+    borderRadius: '0 4px 4px 0',
+    cursor: 'pointer' as 'pointer',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
+  },
 };
 
 export default ChatBotSimpleApi; // Exporte le composant pour pouvoir l'utiliser dans d'autres fichiers
