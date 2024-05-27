@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'; // Importation des hooks React
+import { marked } from 'marked'; // Importation du parser Markdown
 
 // Interface qui définit la structure des messages du chat
 interface ChatBubble {
@@ -84,7 +85,7 @@ class ChatApp {
 
 // Composant React qui gère l'interface utilisateur du chatbot
 const ChatBotSimpleApi: React.FC = () => {
-  const [messages, setMessages] = useState<string[]>([]); // État pour stocker les messages du chat
+  const [messages, setMessages] = useState<ChatBubble[]>([]); // État pour stocker les messages du chat
   const [inputValue, setInputValue] = useState<string>(''); // État pour stocker la valeur de l'input utilisateur
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]); // État pour stocker l'historique de la conversation
   const chatApp = new ChatApp(); // Instance de la classe ChatApp
@@ -103,13 +104,13 @@ const ChatBotSimpleApi: React.FC = () => {
     if (inputValue.trim() !== '') { // Vérifie que l'input n'est pas vide
       const newUserMessage: ChatBubble = { type: 'question', text: inputValue }; // Crée un nouvel objet ChatBubble pour le message utilisateur
 
-      setMessages((prevMessages) => [...prevMessages, `Utilisateur dit: ${inputValue}`]); // Ajoute le message utilisateur à la liste des messages
+      setMessages((prevMessages) => [...prevMessages, newUserMessage]); // Ajoute le message utilisateur à la liste des messages
       setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]); // Ajoute le message utilisateur à l'historique de la conversation
 
       const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]); // Envoie le message à l'API et récupère la réponse
       const newBotMessage: ChatBubble = { type: 'response', text: responseText }; // Crée un nouvel objet ChatBubble pour la réponse du chatbot
 
-      setMessages((prevMessages) => [...prevMessages, `Chatbot dit: ${responseText}`]); // Ajoute la réponse du chatbot à la liste des messages
+      setMessages((prevMessages) => [...prevMessages, newBotMessage]); // Ajoute la réponse du chatbot à la liste des messages
       setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]); // Ajoute la réponse du chatbot à l'historique de la conversation
 
       setInputValue(''); // Réinitialise la valeur de l'input utilisateur
@@ -127,12 +128,18 @@ const ChatBotSimpleApi: React.FC = () => {
     }
   };
 
+  // Fonction pour afficher le texte avec Markdown
+  const renderMarkdown = (text: string) => {
+    const html = marked(text); // Convertit le texte Markdown en HTML
+    return { __html: html }; // Retourne un objet avec le HTML pour l'injection sécurisée
+  };
+
   return (
     <div style={styles.container}> {/* Ajoute le style pour le conteneur du chatbot */}
       <div style={styles.header}>Support Assistant</div> {/* Ajoute un en-tête pour le chatbot */}
       <div style={styles.messages} id="messages"> {/* Conteneur pour afficher les messages */}
         {messages.map((msg, index) => (
-          <div key={index}>{msg}</div>
+          <div key={index} style={msg.type === 'question' ? styles.userBubble : styles.botBubble} dangerouslySetInnerHTML={renderMarkdown(msg.text)} />
         ))}
         <div ref={messagesEndRef} />
       </div>
@@ -192,6 +199,20 @@ const styles = {
   },
   buttonHover: {
     backgroundColor: '#0056b3',
+  },
+  userBubble: {
+    backgroundColor: '#e1ffc7',
+    borderRadius: '10px',
+    padding: '10px',
+    margin: '5px',
+    alignSelf: 'flex-end',
+  },
+  botBubble: {
+    backgroundColor: '#f1f0f0',
+    borderRadius: '10px',
+    padding: '10px',
+    margin: '5px',
+    alignSelf: 'flex-start',
   },
 };
 
