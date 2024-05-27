@@ -180,6 +180,8 @@ const styles = {
     maxHeight: '300px',
     overflowY: 'auto' as 'auto',
     marginBottom: '10px',
+    display: 'flex',
+    flexDirection: 'column',
   },
   inputContainer: {
     display: 'flex' as 'flex',
@@ -205,15 +207,18 @@ const styles = {
     backgroundColor: '#e1ffc7',
     borderRadius: '10px',
     padding: '2px 5px', // Further reduced padding
-    margin: '2px 0', // Reduced margin
-    alignSelf: 'flex-end',
+    margin: '2px 0',
+    alignSelf: 'flex-end', // Align user's message to the right
+    maxWidth: '80%', // Adjust as necessary
+    textAlign: 'right',
   },
   botBubble: {
     backgroundColor: '#f1f0f0',
     borderRadius: '10px',
     padding: '2px 5px', // Further reduced padding
-    margin: '2px 0', // Reduced margin
-    alignSelf: 'flex-start',
+    margin: '2px 0',
+    alignSelf: 'flex-start', // Align bot's message to the left
+    maxWidth: '80%', // Adjust as necessary
   },
 };
 
