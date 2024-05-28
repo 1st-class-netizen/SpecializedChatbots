@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'; // Importation des hooks React
-import { marked } from 'marked'; // Importation du parser Markdown
+import React, { useEffect, useRef, useState } from 'react';
+import { marked } from 'marked';
 
 // Interface qui définit la structure des messages du chat
 interface ChatBubble {
@@ -9,133 +9,172 @@ interface ChatBubble {
 
 // Classe qui gère la logique du chatbot et la communication avec l'API Gemini 1.5 Flash
 class ChatApp {
+  description: string;
   apiKey: string; // Clé API pour authentifier les requêtes
   apiUrl: string; // URL de l'API Gemini 1.5 Flash
-  assistantPurpose: string; // But de l'assistant
+  generationConfig: any; // Configuration pour la génération de contenu
+  safetySettings: any[]; // Paramètres de sécurité
 
   constructor() {
-    // Initialisation de la clé API
-    this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U'; // Utilise la clé API à partir des variables d'environnement
-    // Initialisation de l'URL de l'API
+    this.description = '';
+    this.apiKey = 'AIzaSyBVHf9S6j4i_w47s8bl9PO5K39dQ6bg96U';
     this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
-    // Définition du but de l'assistant
-    this.assistantPurpose = "Je suis votre aide Cybercap et je répond à toutes vos questions en lien avec Cybercap.";
+    this.generationConfig = {
+      temperature: 0.1,
+      topP: 0.95,
+      topK: 64,
+      maxOutputTokens: 8192,
+      responseMimeType: "text/plain",
+    };
+    this.safetySettings = [
+      {
+        category: "HARM_CATEGORY_HARASSMENT",
+        threshold: "BLOCK_NONE",
+      },
+      {
+        category: "HARM_CATEGORY_HATE_SPEECH",
+        threshold: "BLOCK_NONE",
+      },
+      {
+        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        threshold: "BLOCK_NONE",
+      },
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_NONE",
+      },
+    ];
+  }
+
+  async fetchDescription(): Promise<void> {
+    try {
+      const response = await fetch('/description.txt');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const text = await response.text();
+      this.description = text;
+      console.log('Description loaded:', this.description); // Log to confirm the content
+    } catch (err) {
+      console.error('Failed to load description:', err);
+    }
   }
 
   // Méthode pour échapper les caractères spéciaux dans une chaîne de caractères
   escapeString(str: string): string {
-    // Remplacement des caractères spéciaux par leurs équivalents échappés
     return str.replace(/\\/g, '\\\\') // Échappe les antislash
               .replace(/"/g, '\\"') // Échappe les guillemets doubles
-              .replace(/'/g, "\\'"); // Échappe les guillemets simples
+              .replace(/'/g, "\\'") // Échappe les guillemets simples
+              .replace(/\n/g, '\\n') // Échappe les nouvelles lignes
+              .replace(/\r/g, '\\r') // Échappe les retours chariot
+              .replace(/\t/g, '\\t'); // Échappe les tabulations
   }
 
   // Méthode asynchrone pour envoyer un message à l'API et obtenir une réponse
   async sendMessage(inputText: string, conversationHistory: ChatBubble[]): Promise<string> {
-    // Échappe les chaînes de caractères pour éviter les erreurs
-    const escapedPurpose = this.escapeString(this.assistantPurpose);
+    const escapedDescription = this.escapeString(this.description);
     const escapedInputText = this.escapeString(inputText);
     const escapedHistory = conversationHistory.map(bubble => ({
-      ...bubble, // Copie toutes les propriétés de l'objet bubble
-      text: this.escapeString(bubble.text) // Échappe le texte du message
+      ...bubble,
+      text: this.escapeString(bubble.text)
     }));
 
     // Prépare le corps de la requête
     const requestBody = {
       contents: [
-        { role: "user", parts: [{ text: escapedPurpose }] }, // Ajoute le but de l'assistant comme message utilisateur
-        { role: "model", parts: [{ text: "Je suis votre aide Cybercap et je répond à toutes vos questions en lien avec Cybercap." }] }, // Réponse initiale du modèle
+        { role: "user", parts: [{ text: escapedDescription + " Je réponds avec une courte description, réponse très simple et courte seulement." }] },
+        { role: "model", parts: [{ text: "Je réponds en une phrase seulement avec une courte description, mes réponses sont très courtes et simples." }] },
         ...escapedHistory.map(bubble => ({
-          role: bubble.type === 'question' ? "user" : "model", // Définit le rôle en fonction du type de message
-          parts: [{ text: bubble.text }] // Ajoute le texte du message
+          role: bubble.type === 'question' ? "user" : "model",
+          parts: [{ text: bubble.text }]
         })),
-        { role: "user", parts: [{ text: escapedInputText }] }, // Ajoute le message utilisateur
-      ]
+        { role: "user", parts: [{ text: escapedInputText }] },
+      ],
+      generationConfig: this.generationConfig,
+      safetySettings: this.safetySettings,
     };
 
     try {
-      // Envoie la requête à l'API
       const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: 'POST', // Utilise la méthode POST
-        headers: { 'Content-Type': 'application/json' }, // Définit le type de contenu comme JSON
-        body: JSON.stringify(requestBody) // Convertit le corps de la requête en JSON
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
       });
 
-      // Récupère les données de la réponse
       const data = await response.json();
       console.log('API response:', data); // Affiche la réponse de l'API dans la console
 
-      // Vérifie la structure de la réponse
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-        throw new Error('Invalid API response structure'); // Lance une erreur si la structure de la réponse est invalide
+        throw new Error('Invalid API response structure');
       }
 
-      // Extrait le texte de la réponse
       const responseText = data.candidates[0].content.parts.map((part: any) => part.text).join(' ');
-      return responseText; // Retourne le texte de la réponse
+      return responseText;
     } catch (error) {
-      console.error('Error:', error); // Affiche l'erreur dans la console
-      return 'Error fetching response'; // Retourne un message d'erreur
+      console.error('Error:', error);
+      return 'Error fetching response';
     }
   }
 }
 
 // Composant React qui gère l'interface utilisateur du chatbot
 const ChatBotSimpleApi: React.FC = () => {
-  const [messages, setMessages] = useState<ChatBubble[]>([]); // État pour stocker les messages du chat
-  const [inputValue, setInputValue] = useState<string>(''); // État pour stocker la valeur de l'input utilisateur
-  const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]); // État pour stocker l'historique de la conversation
-  const chatApp = new ChatApp(); // Instance de la classe ChatApp
-  const messagesEndRef = useRef<HTMLDivElement>(null); // Référence pour l'élément de fin de messages
-  const containerRef = useRef<HTMLDivElement>(null); // Référence pour le conteneur du chatbot
+  const [messages, setMessages] = useState<ChatBubble[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
+  const [chatApp, setChatApp] = useState<ChatApp | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Effet pour mettre à jour l'affichage des messages et faire défiler vers le bas
+  useEffect(() => {
+    const app = new ChatApp();
+    app.fetchDescription().then(() => {
+      setChatApp(app);
+    });
+  }, []);
+
   useEffect(() => {
     const messagesDiv = document.getElementById('messages');
     if (messagesDiv) {
-      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Faire défiler vers le bas lorsque de nouveaux messages sont ajoutés
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-  }, [messages]); // Exécute cet effet chaque fois que 'messages' change
+  }, [messages]);
 
-  // Fonction pour gérer l'envoi des messages
   const handleSendMessage = async () => {
-    if (inputValue.trim() !== '') { // Vérifie que l'input n'est pas vide
-      const newUserMessage: ChatBubble = { type: 'question', text: inputValue }; // Crée un nouvel objet ChatBubble pour le message utilisateur
+    if (inputValue.trim() !== '') {
+      const newUserMessage: ChatBubble = { type: 'question', text: inputValue };
 
-      setMessages((prevMessages) => [...prevMessages, newUserMessage]); // Ajoute le message utilisateur à la liste des messages
-      setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]); // Ajoute le message utilisateur à l'historique de la conversation
+      setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+      setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]);
 
-      setInputValue(''); // Réinitialise la valeur de l'input utilisateur avant l'envoi du message
+      setInputValue('');
 
-      const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]); // Envoie le message à l'API et récupère la réponse
-      const newBotMessage: ChatBubble = { type: 'response', text: responseText }; // Crée un nouvel objet ChatBubble pour la réponse du chatbot
+      if (chatApp) {
+        const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]);
+        const newBotMessage: ChatBubble = { type: 'response', text: responseText };
 
-      setMessages((prevMessages) => [...prevMessages, newBotMessage]); // Ajoute la réponse du chatbot à la liste des messages
-      setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]); // Ajoute la réponse du chatbot à l'historique de la conversation
+        setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+        setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]);
+      }
     }
   };
 
-  // Fonction pour gérer la pression des touches dans l'input
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) { // Si "Enter" est pressé sans "Shift"
-      e.preventDefault(); // Empêche le comportement par défaut (nouvelle ligne)
-      handleSendMessage(); // Envoie le message
-    } else if (e.key === 'Enter' && e.shiftKey) { // Si "Shift+Enter" est pressé
-      e.preventDefault(); // Empêche le comportement par défaut
-      setInputValue(inputValue + '\n'); // Ajoute une nouvelle ligne dans l'input
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    } else if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault();
+      setInputValue(inputValue + '\n');
     }
   };
 
-  // Fonction pour afficher le texte avec Markdown
   const renderMarkdown = (text: string) => {
-    // Replace newlines with <br> tags
-    const textWithLineBreaks = text.replace(/\n/g, '<br>');
-    // Parse the Markdown text into HTML
-    const html = marked(textWithLineBreaks);
-    return { __html: html }; // Retourne un objet avec le HTML pour l'injection sécurisée
+    const formattedText = text.replace(/(\n|^)(\* )/g, '$1\n$2');
+    const html = marked(formattedText);
+    return { __html: html };
   };
 
-  // Fonction pour gérer le redimensionnement du conteneur
   const handleMouseDown = (e: React.MouseEvent) => {
     const container = containerRef.current;
     if (container) {
@@ -162,24 +201,24 @@ const ChatBotSimpleApi: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} style={styles.container} onMouseDown={handleMouseDown}> {/* Ajoute le style pour le conteneur du chatbot */}
-      <div style={styles.header}>Support Assistant</div> {/* Ajoute un en-tête pour le chatbot */}
-      <div style={styles.messages} id="messages"> {/* Conteneur pour afficher les messages */}
+    <div ref={containerRef} style={styles.container} onMouseDown={handleMouseDown}>
+      <div style={styles.header}>Assistant Cybercap</div>
+      <div style={styles.messages} id="messages">
         {messages.map((msg, index) => (
           <div key={index} style={msg.type === 'question' ? styles.userBubble : styles.botBubble} dangerouslySetInnerHTML={renderMarkdown(msg.text)} />
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div style={styles.inputContainer}> {/* Conteneur pour l'input et le bouton */}
+      <div style={styles.inputContainer}>
         <input
-          type="text" // Définit le type de l'input comme texte
-          value={inputValue} // Associe l'état inputValue à la valeur de l'input
-          onChange={(e) => setInputValue(e.target.value)} // Met à jour inputValue lorsque l'utilisateur tape
-          onKeyDown={handleKeyPress} // Gère la pression des touches
-          placeholder="Entrez votre message ici" // Texte d'espace réservé dans l'input
-          style={styles.input} // Applique le style à l'input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyPress}
+          placeholder="Entrez votre message ici"
+          style={styles.input}
         />
-        <button onClick={handleSendMessage} style={styles.button}>Envoyer</button> {/* Bouton pour envoyer le message */}
+        <button onClick={handleSendMessage} style={styles.button}>Envoyer</button>
       </div>
     </div>
   );
@@ -191,16 +230,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     bottom: '20px',
     right: '20px',
     width: '300px',
-    height: '400px', // Initial height
+    height: '400px',
     backgroundColor: 'white',
     boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
     borderRadius: '8px',
     padding: '10px',
     zIndex: 1000,
-    resize: 'both', // Make it resizable
-    overflow: 'auto', // Handle overflow
+    resize: 'both',
+    overflow: 'auto',
     display: 'flex',
-    flexDirection: 'column', // Use column layout to stack elements vertically
+    flexDirection: 'column',
   },
   header: {
     fontWeight: 'bold',
@@ -208,14 +247,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '10px',
   },
   messages: {
-    flex: 1, // Allow messages container to grow and fill the available space
+    flex: 1,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
   },
   inputContainer: {
     display: 'flex',
-    marginTop: 'auto', // Push the input container to the bottom
+    marginTop: 'auto',
   },
   input: {
     flex: 1,
@@ -237,20 +276,20 @@ const styles: { [key: string]: React.CSSProperties } = {
   userBubble: {
     backgroundColor: '#e1ffc7',
     borderRadius: '10px',
-    padding: '2px 5px', // Further reduced padding
+    padding: '2px 5px',
     margin: '2px 0',
-    alignSelf: 'flex-end', // Align user's message to the right
-    maxWidth: '80%', // Adjust as necessary
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
     textAlign: 'right',
   },
   botBubble: {
     backgroundColor: '#f1f0f0',
     borderRadius: '10px',
-    padding: '2px 5px', // Further reduced padding
+    padding: '2px 5px',
     margin: '2px 0',
-    alignSelf: 'flex-start', // Align bot's message to the left
-    maxWidth: '80%', // Adjust as necessary
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
   },
 };
 
-export default ChatBotSimpleApi; // Exporte le composant pour pouvoir l'utiliser dans d'autres fichiers
+export default ChatBotSimpleApi;
