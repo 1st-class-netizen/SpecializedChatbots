@@ -27,10 +27,7 @@ class ChatApp {
     // Remplacement des caractères spéciaux par leurs équivalents échappés
     return str.replace(/\\/g, '\\\\') // Échappe les antislash
               .replace(/"/g, '\\"') // Échappe les guillemets doubles
-              .replace(/'/g, "\\'") // Échappe les guillemets simples
-              .replace(/\n/g, '\\n') // Échappe les nouvelles lignes
-              .replace(/\r/g, '\\r') // Échappe les retours chariot
-              .replace(/\t/g, '\\t'); // Échappe les tabulations
+              .replace(/'/g, "\\'"); // Échappe les guillemets simples
   }
 
   // Méthode asynchrone pour envoyer un message à l'API et obtenir une réponse
@@ -131,8 +128,10 @@ const ChatBotSimpleApi: React.FC = () => {
 
   // Fonction pour afficher le texte avec Markdown
   const renderMarkdown = (text: string) => {
+    // Replace newlines with <br> tags
+    const textWithLineBreaks = text.replace(/\n/g, '<br>');
     // Parse the Markdown text into HTML
-    const html = marked(text);
+    const html = marked(textWithLineBreaks);
     return { __html: html }; // Retourne un objet avec le HTML pour l'injection sécurisée
   };
 
@@ -146,8 +145,8 @@ const ChatBotSimpleApi: React.FC = () => {
       const startHeight = container.offsetHeight;
 
       const handleMouseMove = (e: MouseEvent) => {
-        const newWidth = startWidth + (e.clientX - startX);
-        const newHeight = startHeight + (e.clientY - startY);
+        const newWidth = startWidth - (e.clientX - startX);
+        const newHeight = startHeight - (e.clientY - startY);
         container.style.width = `${newWidth}px`;
         container.style.height = `${newHeight}px`;
       };
@@ -186,9 +185,9 @@ const ChatBotSimpleApi: React.FC = () => {
   );
 };
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    position: 'fixed' as 'fixed',
+    position: 'fixed',
     bottom: '20px',
     right: '20px',
     width: '300px',
@@ -200,21 +199,23 @@ const styles = {
     zIndex: 1000,
     resize: 'both', // Make it resizable
     overflow: 'auto', // Handle overflow
+    display: 'flex',
+    flexDirection: 'column', // Use column layout to stack elements vertically
   },
   header: {
-    fontWeight: 'bold' as 'bold',
-    textAlign: 'center' as 'center',
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginBottom: '10px',
   },
   messages: {
-    maxHeight: 'calc(100% - 80px)', // Adjust according to header and input heights
-    overflowY: 'auto' as 'auto',
-    marginBottom: '10px',
+    flex: 1, // Allow messages container to grow and fill the available space
+    overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
   },
   inputContainer: {
-    display: 'flex' as 'flex',
+    display: 'flex',
+    marginTop: 'auto', // Push the input container to the bottom
   },
   input: {
     flex: 1,
@@ -228,7 +229,7 @@ const styles = {
     backgroundColor: '#007bff',
     color: 'white',
     borderRadius: '0 4px 4px 0',
-    cursor: 'pointer' as 'pointer',
+    cursor: 'pointer',
   },
   buttonHover: {
     backgroundColor: '#0056b3',
