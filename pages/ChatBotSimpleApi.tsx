@@ -249,6 +249,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: '10px',
+    color: '#FFFFFF',  // Updated to white to match Cybercap header
+    backgroundColor: '#005B96',  // Updated to match Cybercap color
+    padding: '10px',
+    borderRadius: '8px 8px 0 0'
   },
   messages: {
     flex: 1,
@@ -269,13 +273,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   button: {
     padding: '5px 10px',
     border: 'none',
-    backgroundColor: '#007bff',
+    backgroundColor: '#FF6F61',  // Updated to match Cybercap button color
     color: 'white',
     borderRadius: '0 4px 4px 0',
     cursor: 'pointer',
   },
   buttonHover: {
-    backgroundColor: '#0056b3',
+    backgroundColor: '#E65B53',
   },
   userBubble: {
     backgroundColor: '#e1ffc7',
@@ -285,6 +289,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: 'flex-end',
     maxWidth: '80%',
     textAlign: 'right',
+    color: '#005B96',  // Updated text color to match Cybercap color
   },
   botBubble: {
     backgroundColor: '#f1f0f0',
@@ -293,6 +298,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: '2px 0',
     alignSelf: 'flex-start',
     maxWidth: '80%',
+    color: '#005B96',  // Updated text color to match Cybercap color
   },
 };
 
