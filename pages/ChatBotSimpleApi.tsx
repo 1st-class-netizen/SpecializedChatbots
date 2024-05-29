@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 
-// Interface qui définit la structure des messages du chat
+// Interface defining the structure of chat messages
 interface ChatBubble {
-  type: 'question' | 'response'; // Le type peut être une question ou une réponse
-  text: string; // Le texte du message
+  type: 'question' | 'response';
+  text: string;
 }
 
-// Classe qui gère la logique du chatbot et la communication avec l'API Gemini 1.5 Flash
+// Class handling chatbot logic and API communication
 class ChatApp {
   description: string;
-  apiKey: string; // Clé API pour authentifier les requêtes
-  apiUrl: string; // URL de l'API Gemini 1.5 Flash
-  generationConfig: any; // Configuration pour la génération de contenu
-  safetySettings: any[]; // Paramètres de sécurité
+  apiKey: string;
+  apiUrl: string;
+  generationConfig: any;
+  safetySettings: any[];
 
   constructor() {
     this.description = '';
@@ -27,22 +27,10 @@ class ChatApp {
       responseMimeType: "text/plain",
     };
     this.safetySettings = [
-      {
-        category: "HARM_CATEGORY_HARASSMENT",
-        threshold: "BLOCK_NONE",
-      },
-      {
-        category: "HARM_CATEGORY_HATE_SPEECH",
-        threshold: "BLOCK_NONE",
-      },
-      {
-        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        threshold: "BLOCK_NONE",
-      },
-      {
-        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-        threshold: "BLOCK_NONE",
-      },
+      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
     ];
   }
 
@@ -54,23 +42,21 @@ class ChatApp {
       }
       const text = await response.text();
       this.description = text;
-      console.log('Description loaded:', this.description); // Log to confirm the content
+      console.log('Description loaded:', this.description);
     } catch (err) {
       console.error('Failed to load description:', err);
     }
   }
 
-  // Méthode pour échapper les caractères spéciaux dans une chaîne de caractères
   escapeString(str: string): string {
-    return str.replace(/\\/g, '\\\\') // Échappe les antislash
-              .replace(/"/g, '\\"') // Échappe les guillemets doubles
-              .replace(/'/g, "\\'") // Échappe les guillemets simples
-              .replace(/\n/g, '\\n') // Échappe les nouvelles lignes
-              .replace(/\r/g, '\\r') // Échappe les retours chariot
-              .replace(/\t/g, '\\t'); // Échappe les tabulations
+    return str.replace(/\\/g, '\\\\')
+              .replace(/"/g, '\\"')
+              .replace(/'/g, "\\'")
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r')
+              .replace(/\t/g, '\\t');
   }
 
-  // Méthode asynchrone pour envoyer un message à l'API et obtenir une réponse
   async sendMessage(inputText: string, conversationHistory: ChatBubble[]): Promise<string> {
     const escapedDescription = this.escapeString(this.description);
     const escapedInputText = this.escapeString(inputText);
@@ -79,7 +65,6 @@ class ChatApp {
       text: this.escapeString(bubble.text)
     }));
 
-    // Prépare le corps de la requête
     const requestBody = {
       contents: [
         { role: "user", parts: [{ text: escapedDescription + " Je réponds avec une courte description, réponse très simple et courte seulement." }] },
@@ -102,7 +87,7 @@ class ChatApp {
       });
 
       const data = await response.json();
-      console.log('API response:', data); // Affiche la réponse de l'API dans la console
+      console.log('API response:', data);
 
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
         throw new Error('Invalid API response structure');
@@ -117,7 +102,6 @@ class ChatApp {
   }
 }
 
-// Composant React qui gère l'interface utilisateur du chatbot
 const ChatBotSimpleApi: React.FC = () => {
   const [messages, setMessages] = useState<ChatBubble[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -131,6 +115,26 @@ const ChatBotSimpleApi: React.FC = () => {
     app.fetchDescription().then(() => {
       setChatApp(app);
     });
+
+    // Set background for the whole body
+    document.body.style.backgroundImage = 'url(/cybercappng.png)';
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.height = '100vh';
+    document.body.style.margin = '0';
+    document.body.style.fontFamily = 'Arial, sans-serif';
+
+    // Clean up the style on unmount
+    return () => {
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+      document.body.style.backgroundRepeat = '';
+      document.body.style.height = '';
+      document.body.style.margin = '';
+      document.body.style.fontFamily = '';
+    };
   }, []);
 
   useEffect(() => {
