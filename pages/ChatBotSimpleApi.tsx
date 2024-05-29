@@ -107,6 +107,7 @@ const ChatBotSimpleApi: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]);
   const [chatApp, setChatApp] = useState<ChatApp | null>(null);
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -204,26 +205,37 @@ const ChatBotSimpleApi: React.FC = () => {
     }
   };
 
+  const handleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
   return (
-    <div ref={containerRef} style={styles.container} onMouseDown={handleMouseDown}>
-      <div style={styles.header}>Assistant Cybercap</div>
-      <div style={styles.messages} id="messages">
-        {messages.map((msg, index) => (
-          <div key={index} style={msg.type === 'question' ? styles.userBubble : styles.botBubble} dangerouslySetInnerHTML={renderMarkdown(msg.text)} />
-        ))}
-        <div ref={messagesEndRef} />
+    <div ref={containerRef} style={{ ...styles.container, ...(isMinimized ? styles.containerMinimized : {}) }} onMouseDown={handleMouseDown}>
+      <div style={styles.header}>
+        <span>Assistant Cybercap</span>
+        <button onClick={handleMinimize} style={styles.minimizeButton}>{isMinimized ? '🔍' : '➖'}</button>
       </div>
-      <div style={styles.inputContainer}>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Entrez votre message ici"
-          style={styles.input}
-        />
-        <button onClick={handleSendMessage} style={styles.button}>Envoyer</button>
-      </div>
+      {!isMinimized && (
+        <>
+          <div style={styles.messages} id="messages">
+            {messages.map((msg, index) => (
+              <div key={index} style={msg.type === 'question' ? styles.userBubble : styles.botBubble} dangerouslySetInnerHTML={renderMarkdown(msg.text)} />
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+          <div style={styles.inputContainer}>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Entrez votre message ici"
+              style={styles.input}
+            />
+            <button onClick={handleSendMessage} style={styles.button}>Envoyer</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -245,14 +257,30 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexDirection: 'column',
   },
+  containerMinimized: {
+    width: '200px',
+    height: '40px',
+    overflow: 'hidden',
+  },
   header: {
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: '10px',
-    color: '#FFFFFF',  // Updated to white to match Cybercap header
-    backgroundColor: '#005B96',  // Updated to match Cybercap color
+    color: '#FFFFFF',
+    backgroundColor: '#005B96',
     padding: '10px',
-    borderRadius: '8px 8px 0 0'
+    borderRadius: '8px 8px 0 0',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  minimizeButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: '20px',
+    lineHeight: '20px',
   },
   messages: {
     flex: 1,
@@ -273,7 +301,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   button: {
     padding: '5px 10px',
     border: 'none',
-    backgroundColor: '#FF6F61',  // Updated to match Cybercap button color
+    backgroundColor: '#FF6F61',
     color: 'white',
     borderRadius: '0 4px 4px 0',
     cursor: 'pointer',
@@ -289,7 +317,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: 'flex-end',
     maxWidth: '80%',
     textAlign: 'right',
-    color: '#005B96',  // Updated text color to match Cybercap color
+    color: '#005B96',
   },
   botBubble: {
     backgroundColor: '#f1f0f0',
@@ -298,7 +326,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: '2px 0',
     alignSelf: 'flex-start',
     maxWidth: '80%',
-    color: '#005B96',  // Updated text color to match Cybercap color
+    color: '#005B96',
   },
 };
 
