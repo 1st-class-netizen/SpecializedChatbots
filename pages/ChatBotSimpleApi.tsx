@@ -52,7 +52,7 @@ class ChatApp {
     return str.replace(/\\/g, '\\\\')
               .replace(/"/g, '\\"')
               .replace(/'/g, "\\'")
-              .replace(/\n/g, '\\n')
+              .replace(/\n/g, '')  // Remove newline characters
               .replace(/\r/g, '\\r')
               .replace(/\t/g, '\\t');
   }
@@ -334,9 +334,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: 'absolute',
     top: '0',
     left: '0',
-    width: '20px',
-    height: '20px',
-    backgroundColor: '#005B96',
+    width: '10px',
+    height: '10px',
+    backgroundColor: '#FFFFFF',
     cursor: 'nwse-resize',
     zIndex: 1001,
     borderTopLeftRadius: '8px',
