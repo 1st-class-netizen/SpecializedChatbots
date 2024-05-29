@@ -110,6 +110,7 @@ const ChatBotSimpleApi: React.FC = () => {
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const resizeHandleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const app = new ChatApp();
@@ -182,15 +183,16 @@ const ChatBotSimpleApi: React.FC = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     const container = containerRef.current;
-    if (container) {
+    const resizeHandle = resizeHandleRef.current;
+    if (container && resizeHandle && e.target === resizeHandle) {
       const startX = e.clientX;
       const startY = e.clientY;
       const startWidth = container.offsetWidth;
       const startHeight = container.offsetHeight;
 
       const handleMouseMove = (e: MouseEvent) => {
-        const newWidth = startWidth - (e.clientX - startX);
-        const newHeight = startHeight - (e.clientY - startY);
+        const newWidth = startWidth + (startX - e.clientX);
+        const newHeight = startHeight + (startY - e.clientY);
         container.style.width = `${newWidth}px`;
         container.style.height = `${newHeight}px`;
       };
@@ -210,7 +212,8 @@ const ChatBotSimpleApi: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} style={{ ...styles.container, ...(isMinimized ? styles.containerMinimized : {}) }} onMouseDown={handleMouseDown}>
+    <div ref={containerRef} style={{ ...styles.container, ...(isMinimized ? styles.containerMinimized : {}) }}>
+      <div ref={resizeHandleRef} style={styles.resizeHandle} onMouseDown={handleMouseDown}></div>
       <div style={styles.header}>
         <span>Assistant Cybercap</span>
         <button onClick={handleMinimize} style={styles.minimizeButton}>{isMinimized ? '🔍' : '➖'}</button>
@@ -252,7 +255,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '8px',
     padding: '10px',
     zIndex: 1000,
-    resize: 'both',
     overflow: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -328,6 +330,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxWidth: '80%',
     color: '#005B96',
   },
+  resizeHandle: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '20px',
+    height: '20px',
+    backgroundColor: '#005B96',
+    cursor: 'nwse-resize',
+    zIndex: 1001,
+    borderTopLeftRadius: '8px',
+  }
 };
 
 export default ChatBotSimpleApi;
