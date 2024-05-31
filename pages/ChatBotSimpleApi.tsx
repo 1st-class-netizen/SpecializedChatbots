@@ -145,7 +145,7 @@ const ChatBotSimpleApi: React.FC = () => {
     });
 
     // Définir l'arrière-plan pour tout le corps du document
-    document.body.style.backgroundImage = 'url(/cybercappng.png)'; // Définition de l'image d'arrière-plan
+    document.body.style.backgroundImage = 'url(/background.jpg)'; // Définition de l'image d'arrière-plan
     document.body.style.backgroundSize = 'cover'; // L'image couvre toute la zone
     document.body.style.backgroundPosition = 'center'; // L'image est centrée
     document.body.style.backgroundRepeat = 'no-repeat'; // Pas de répétition de l'image
@@ -251,7 +251,7 @@ const ChatBotSimpleApi: React.FC = () => {
     <div ref={containerRef} style={{ ...styles.container, ...(isMinimized ? styles.containerMinimized : {}) }}>
       <div ref={resizeHandleRef} style={styles.resizeHandle} onMouseDown={handleMouseDown}></div>
       <div style={styles.header}>
-        <span>Assistant Cybercap</span>
+        <span>Assistant Cybersécurité</span>
         <button onClick={handleMinimize} style={styles.minimizeButton}>{isMinimized ? '🔍' : '➖'}</button>
       </div>
       {!isMinimized && (
