@@ -126,7 +126,7 @@ class ChatApp {
 }
 
 // Composant fonctionnel React pour le chatbot
-const ChatBotSimpleApi: React.FC = () => {
+const chatbot: React.FC = () => {
   // Déclaration des états pour gérer les messages, la valeur d'entrée, l'historique des conversations et l'instance de ChatApp
   const [messages, setMessages] = useState<ChatBubble[]>([]); // État pour stocker les messages du chat, initialisé à une liste vide
   const [inputValue, setInputValue] = useState<string>(''); // État pour stocker la valeur actuelle du champ de saisie, initialisé à une chaîne vide
@@ -380,5 +380,5 @@ const styles: { [key: string]: React.CSSProperties } = {
   }
 };
 
-// Exportation du composant ChatBotSimpleApi comme composant par défaut
-export default ChatBotSimpleApi;
+// Exportation du composant chatbot comme composant par défaut
+export default chatbot;
