@@ -133,6 +133,7 @@ const chatbot: React.FC = () => {
   const [conversationHistory, setConversationHistory] = useState<ChatBubble[]>([]); // État pour stocker l'historique des conversations, initialisé à une liste vide
   const [chatApp, setChatApp] = useState<ChatApp | null>(null); // État pour stocker l'instance de ChatApp, initialisé à null
   const [isMinimized, setIsMinimized] = useState<boolean>(false); // État pour gérer la minimisation de la fenêtre du chat, initialisé à false
+  const [isTyping, setIsTyping] = useState<boolean>(false); // État pour indiquer si le bot est en train d'écrire
   const messagesEndRef = useRef<HTMLDivElement>(null); // Référence pour le défilement automatique vers le bas des messages
   const containerRef = useRef<HTMLDivElement>(null); // Référence pour le conteneur principal du chat
   const resizeHandleRef = useRef<HTMLDivElement>(null); // Référence pour la poignée de redimensionnement du conteneur
@@ -184,12 +185,14 @@ const chatbot: React.FC = () => {
       setInputValue(''); // Réinitialise la valeur du champ de saisie à une chaîne vide
 
       if (chatApp) {
+        setIsTyping(true); // Indique que le bot est en train d'écrire
         // Envoie le message à l'API et obtient la réponse du chatbot
         const responseText = await chatApp.sendMessage(inputValue, [...conversationHistory, newUserMessage]);
         const newBotMessage: ChatBubble = { type: 'response', text: responseText }; // Crée un nouvel objet message pour la réponse du bot
 
         setMessages((prevMessages) => [...prevMessages, newBotMessage]); // Ajoute la réponse du bot à la liste des messages
         setConversationHistory((prevHistory) => [...prevHistory, newBotMessage]); // Ajoute la réponse du bot à l'historique
+        setIsTyping(false); // Indique que le bot a terminé d'écrire
       }
     }
   };
@@ -261,6 +264,7 @@ const chatbot: React.FC = () => {
               <div key={index} style={msg.type === 'question' ? styles.userBubble : styles.botBubble} dangerouslySetInnerHTML={renderMarkdown(msg.text)} />
             ))}
             <div ref={messagesEndRef} />
+            {isTyping && <div style={styles.typingIndicator}>L'assistant est en train d'écrire...</div>}
           </div>
           <div style={styles.inputContainer}>
             <input
@@ -271,7 +275,12 @@ const chatbot: React.FC = () => {
               placeholder="Entrez votre message ici"
               style={styles.input}
             />
-            <button onClick={handleSendMessage} style={styles.button}>Envoyer</button>
+            <button onClick={handleSendMessage} style={styles.button}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-send">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
           </div>
         </>
       )}
@@ -326,6 +335,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     overflowY: 'auto', // Défilement vertical si nécessaire
     display: 'flex', // Utilisation de flexbox pour l'alignement des enfants
     flexDirection: 'column', // Alignement vertical des enfants
+  },
+  typingIndicator: {
+    color: '#666', // Couleur du texte
+    fontStyle: 'italic', // Italique
+    margin: '10px 0', // Marge verticale
+    textAlign: 'center', // Alignement centré
   },
   inputContainer: {
     display: 'flex', // Utilisation de flexbox pour l'alignement des enfants
