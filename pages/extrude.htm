@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Modeling with Extrude Feature</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #controls { position: absolute; top: 10px; left: 10px; background: white; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="extrudeButton">Extrude</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, shape, extrudedMesh;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 10;
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(5, 5, 5).normalize();
+            scene.add(light);
+
+            shape = new THREE.Shape();
+            shape.moveTo(0, 0);
+            shape.lineTo(2, 0);
+            shape.lineTo(2, 2);
+            shape.lineTo(0, 2);
+            shape.lineTo(0, 0);
+
+            document.getElementById('extrudeButton').addEventListener('click', extrudeShape);
+
+            animate();
+        }
+
+        function extrudeShape() {
+            if (extrudedMesh) {
+                scene.remove(extrudedMesh);
+            }
+
+            const extrudeSettings = {
+                steps: 1,
+                depth: 2,
+                bevelEnabled: false
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+            extrudedMesh = new THREE.Mesh(geometry, material);
+
+            scene.add(extrudedMesh);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+</html>
