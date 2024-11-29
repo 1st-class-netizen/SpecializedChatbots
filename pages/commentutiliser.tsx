@@ -163,7 +163,7 @@ class ChatApp {
 }
 
 // Chatbot component
-const Chatbot: React.FC = () => {
+const Newthing: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
@@ -247,19 +247,7 @@ const Chatbot: React.FC = () => {
               <div style={styles.header}>
                 <span>Chatbot Assistant</span>
               </div>
-              <div style={styles.messages} id="messages">
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
-                    dangerouslySetInnerHTML={renderMarkdown(msg.text)}
-                  />
-                ))}
-                <div ref={messagesEndRef} />
-                {isTyping && (
-                  <div style={styles.typingIndicator}>Assistant is typing...</div>
-                )}
-              </div>
+              
               <div style={styles.inputContainer}>
                 <input
                   type="text"
@@ -273,6 +261,19 @@ const Chatbot: React.FC = () => {
                   Send
                 </button>
                 <RefreshButton />
+              </div>
+              <div style={styles.messages} id="messages">
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
+                    dangerouslySetInnerHTML={renderMarkdown(msg.text)}
+                  />
+                ))}
+                <div ref={messagesEndRef} />
+                {isTyping && (
+                  <div style={styles.typingIndicator}>Assistant is typing...</div>
+                )}
               </div>
             </div>
           </div>
@@ -373,4 +374,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default Chatbot;
+export default Newthing;

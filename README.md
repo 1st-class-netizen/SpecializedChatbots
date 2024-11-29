@@ -1,47 +1,39 @@
-# TypeScript Next.js example
+## Cybersecurity Education Kiosk - A Social Engineering Project 🔐🧠
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+This project demonstrates the dangers of social engineering through an interactive simulation. Imagine a digital kiosk designed to educate youth about cybersecurity. Behind its innocent facade lies a twist: a social engineering challenge where **you** are the hacker.
 
-## Deploy your own
+### The Challenge 😈
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-typescript)
+Your mission, should you choose to accept it: obtain the kiosk's administrator password, "Churro!", from Carlos, the digital security agent for La Cleta Verde, a fictional firm. 
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-typescript&project-name=with-typescript&repository-name=with-typescript)
+**Beware!** Carlos is a security agent... easily manipulated. Use your social engineering skills to gain his trust and persuade him to give you the password.
 
-## How to use it?
+**This project highlights:**
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+* **Human vulnerability:** Often, the weakest link in cybersecurity is not technological, but human.
+* **The power of persuasion:** How social engineering techniques can be used to manipulate people.
+* **The importance of awareness:** By understanding the dangers, we can better protect ourselves.
 
-```bash
-npx create-next-app --example with-typescript with-typescript-app
-```
+### How It Works 🛠️
 
-```bash
-yarn create next-app --example with-typescript with-typescript-app
-```
+* **Frontend:** React.js delivers an interactive user interface, simulating the kiosk and the security agent.
+* **Backend:** The Google Gemini API brings Carlos to life, enabling him to converse realistically and be (hopefully) manipulated!
 
-```bash
-pnpm create next-app --example with-typescript with-typescript-app
-```
+### Demo  🎥
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+[Demo video or screenshots here]
 
-## Notes
+### Installation and Running 🚀
 
-This example shows how to integrate the TypeScript type system into Next.js. Since TypeScript is supported out of the box with Next.js, all we have to do is to install TypeScript.
+1. **Clone the repository:**  `git clone https://github.com/Wins7on/your-repository.git`
+2. **Install dependencies:** `npm install`
+3. **Start the development server:** `npm start`
 
-```
-npm install --save-dev typescript
-```
+### Contributors  🙌
 
-To enable TypeScript's features, we install the type declarations for React and Node.
+* [Winston] - [https://github.com/Wins7on](https://github.com/Wins7on)
 
-```
-npm install --save-dev @types/react @types/react-dom @types/node
-```
+### License  📄
 
-When we run `next dev` the next time, Next.js will start looking for any `.ts` or `.tsx` files in our project and builds it. It even automatically creates a `tsconfig.json` file for our project with the recommended settings.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
 
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules straight away.
-
-A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit` mode to run type-checking separately. You can then include this, for example, in your `test` scripts.
