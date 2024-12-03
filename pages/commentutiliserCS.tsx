@@ -32,19 +32,30 @@ interface ImageWithCaptionProps {
 }
 const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, altText }) => {
   return (
-    <figure>
-      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '600px', height: 'auto' }} />
-      <figcaption 
+    <figure style={{ display: 'flex', flexDirection: 'row', alignItems: 'top' }}>
+      <img
+        src={imageUrl}
+        alt={altText}
+        title={altText}
         style={{
-          textAlign: 'center', 
-          fontStyle: 'italic', 
-          marginTop: '8px',
-          backgroundColor: 'white', // White background behind the text
-          padding: '8px 16px', // Padding around the caption text
-          borderRadius: '8px', // Rounded corners
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the "card"
-          maxWidth: '300px', // Match the image width
-          margin: '0 auto', // Center the caption within the image's width
+          width: '100%',
+          maxWidth: '600px',
+          height: 'auto',
+        }}
+      />
+      <figcaption
+        style={{
+          textAlign: 'left', // Align text to the left of the caption
+          fontFamily: 'Arial, sans-serif',
+          maxHeight: 'fit-content',
+          fontSize: '16pt',
+          marginLeft: '16px', // Space between the image and the caption
+          backgroundColor: '#C1E3C6',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the caption
+          maxWidth: '400px', // Max width of the caption box
+          display: 'block', // Makes sure the caption takes up a block-level width
         }}
       >
         {caption}
@@ -55,12 +66,12 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
 
 // Chat application logic
 class ChatApp {
-  description: string;
+  descriptionL: string;
   apiKey: string;
   apiUrl: string;
 
   constructor() {
-    this.description = '';
+    this.descriptionL = '';
     this.apiKey = 'AIzaSyDZRyPcXJv2Rsc41NxK2VDzATuiAnIht-U'; // Replace with your actual API key
     this.apiUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent';
@@ -68,12 +79,12 @@ class ChatApp {
 
   async fetchDescription(): Promise<void> {
     try {
-      const response = await fetch('/description.txt');
+      const response = await fetch('/descriptionL.txt');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      this.description = await response.text();
-      console.log('Description loaded:', this.description);
+      this.descriptionL = await response.text();
+      console.log('Description loaded:', this.descriptionL);
     } catch (err) {
       console.error('Failed to load description:', err);
     }
@@ -120,7 +131,7 @@ class ChatApp {
         role: 'user',
         parts: [
           {
-            text: this.description || 'Default system instruction here',
+            text: this.descriptionL || 'Default system instruction here',
           },
         ],
       },
@@ -163,69 +174,24 @@ class ChatApp {
 }
 
 // Chatbot component
-const Chatbot: React.FC = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
-  const [chatApp, setChatApp] = useState<ChatApp | null>(null);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+const ChatbotCS: React.FC = () => {
 
-  useEffect(() => {
-    const app = new ChatApp();
-    app.fetchDescription().then(() => {
-      setChatApp(app);
-    });
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (inputValue.trim() !== '') {
-      const newUserMessage: ChatMessage = { type: 'question', text: inputValue };
-      setMessages((prevMessages) => [...prevMessages, newUserMessage]);
-      setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]);
-      setInputValue('');
-
-      if (chatApp) {
-        setIsTyping(true);
-        const responseText = await chatApp.sendMessage(
-          inputValue,
-          [...conversationHistory, newUserMessage]
-        );
-        const newBotMessage: ChatMessage = { type: 'response', text: responseText };
-        setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-        setConversationHistory((prevHistory) => [
-          ...prevHistory,
-          newBotMessage,
-        ]);
-        setIsTyping(false);
-      }
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  const renderMarkdown = (text: string) => {
-    const html = marked(text);
-    return { __html: html };
-  };
-
-  return (<div style={styles.header2}><font color="darkred"><h1>Language site</h1></font>
+  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
+    <h1>
+      <a style={{ color: 'darkred', marginRight: '10px' }}>
+        Language Site
+      </a>
+      <a href="/chatbotCS" style={{ color: 'darkred', marginRight: '10px' }}>
+        Language Exercise Chatbot Assistant
+      </a>
+    </h1>
     <div
   style={{
     background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
     minHeight: '90vh',
     display: 'flex',
     alignItems: 'normal',
-    justifyContent: 'center',
+    justifyContent: 'left',
   }}
 >
       <div style={styles.wrapper}>
@@ -233,50 +199,14 @@ const Chatbot: React.FC = () => {
         {/* Image with caption on the left */}
         <div style={styles.imageContainer}>
           <ImageWithCaption 
-            imageUrl={'/cuneiform-tablet-assyria-905.jpg'} 
+            imageUrl={'/Question-mark-image-4.webp'} 
             altText={'A clay tablet with cuneiform'}
-            caption={'A clay tablet with cuneiform from an Assyrian trading post, c. 1875-1840 BCE. (Los Angeles County Museum of Art, L.A.)'} 
+            caption={'To use this language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
           />
         </div>
         </div>
         {/* Chatbot on the right */}
-        <div style={styles.chatContainer}>
-          
-          <div className="App">
-            <div style={styles.container}>
-              <div style={styles.header}>
-                <span>Chatbot Assistant</span>
-              </div>
-              <div style={styles.messages} id="messages">
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
-                    dangerouslySetInnerHTML={renderMarkdown(msg.text)}
-                  />
-                ))}
-                <div ref={messagesEndRef} />
-                {isTyping && (
-                  <div style={styles.typingIndicator}>Assistant is typing...</div>
-                )}
-              </div>
-              <div style={styles.inputContainer}>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Type your message here"
-                  style={styles.input}
-                />
-                <button onClick={handleSendMessage} style={styles.button}>
-                  Send
-                </button>
-                <RefreshButton />
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   );
@@ -289,7 +219,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   imageContainer: {
     flex: 1,
-
     padding: '4px',
     marginRight: '20px', // Space between the image and chatbot
   },
@@ -309,12 +238,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexDirection: 'column',
     fontFamily: 'Arial, sans-serif',
     position: 'relative',
-  },
-  header2: {
-    fontWeight: 'bold',
-    textAlign: 'left',
-    backgroundColor: '#C1E3C6',
-    padding: '10px',
   },
   header: {
     fontWeight: 'bold',
@@ -373,4 +296,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default Chatbot;
+export default ChatbotCS;
