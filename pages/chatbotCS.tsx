@@ -1,4 +1,4 @@
-// Chatbot.tsx
+// ChatbotCS.tsx
 
 import React, { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
@@ -15,6 +15,7 @@ interface ImageWithCaptionProps {
   altText: string;
 }
 
+// RefreshButton Component
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
     window.location.reload(); // This refreshes the page
@@ -31,10 +32,11 @@ const RefreshButton: React.FC = () => {
   );
 };
 
+// ImageWithCaption Component
 const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, altText }) => {
   return (
     <figure>
-      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '889px', height: 'auto' }} />
+      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '1280px', height: 'auto' }} />
       <figcaption 
         style={{
           textAlign: 'center', 
@@ -53,6 +55,7 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
   );
 };
 
+// Styles Object
 const styles: { [key: string]: React.CSSProperties } = {
   wrapper: {
     display: 'flex',
@@ -105,10 +108,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#f7f7f7',
   },
   bgStyle: {
-    minHeight: '90vh',
+    minHeight: '85.87vh',
     display: 'flex',
     background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
-    backgroundSize: '30% 100%', // Adjust size of gradient
+    backgroundSize: '30%', // Adjust size of gradient
   },
   input: {
     flex: 1,
@@ -141,9 +144,68 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: 'flex-start',
     maxWidth: '80%',
   },
+  // New styles for the sidebar and hamburger menu
+  sidebar: {
+    height: '100%', 
+    width: '0', // Initial width is 0
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    backgroundColor: '#111', 
+    overflowX: 'hidden', 
+    transition: '0.5s', 
+    paddingTop: '60px',
+    zIndex: 1000,
+  },
+  sidebarLink: {
+    padding: '8px 8px 8px 32px',
+    textDecoration: 'none',
+    fontSize: '25px',
+    color: '#818181',
+    display: 'block',
+    transition: '0.3s',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '20px',
+    right: '25px',
+    fontSize: '36px',
+    marginLeft: '50px',
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  hamburgerBtn: {
+    fontSize: '30px',
+    cursor: 'pointer',
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    padding: '10px',
+  },
+  headerWithMenu: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#E3D7C1',
+    padding: '10px',
+    position: 'relative',
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'left',
+  },
+  headerLink: {
+    color: 'midnightblue',
+    marginLeft: '20px',
+  },
 };
 
-// Chat application logic
+// ChatApp class
 class ChatApp {
   descriptionL: string;
   apiKey: string;
@@ -251,8 +313,10 @@ class ChatApp {
   }
 }
 
-// Chatbot component
+// ChatbotCS Component
 const ChatbotCS: React.FC = () => {
+
+  // Chatbot state variables
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
@@ -260,6 +324,9 @@ const ChatbotCS: React.FC = () => {
   const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const app = new ChatApp();
@@ -315,6 +382,14 @@ const ChatbotCS: React.FC = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   const renderMarkdown = (text: string) => {
     const html = marked(text);
     return { __html: html };
@@ -322,64 +397,106 @@ const ChatbotCS: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#E3D7C1', padding: '10px' }}>
-      <h1>
-        <a style={{ color: 'midnightblue', marginRight: '10px' }}>
-          Cybersecurity Site
-        </a>
-        <a href="/commentutiliserCS" style={{ color: 'midnightblue', marginRight: '10px' }}>
-          How to use
-        </a>
-      </h1>
-      <div style={styles.bgStyle}>
-        {/* Repeat `@` symbols in 3 columns */}
-        <div style={styles.wrapper}>
-          {/* Image with caption on the left */}
-          <div style={styles.imageContainer}>
-            <ImageWithCaption 
-              imageUrl={'/kali-desktop-xfce.jpg'} 
-              altText={'Xfce is a lightweight desktop environment for UNIX-like operating systems. It aims to be fast and low on system resources, while still being visually appealing and user friendly.'}
-              caption={'Xfce consists of separately packaged parts that together provide all functions of the desktop environment, but can be selected in subsets to suit user needs and preferences. This is Kali\'s default desktop environment. (kali.org)'} 
-            />
+
+
+
+      {/* Sidebar */}
+      <div
+        style={{
+          ...styles.sidebar,
+          width: sidebarOpen ? '250px' : '0',
+        }}
+      >
+        <button style={styles.closeBtn} onClick={closeSidebar}>
+          &times;
+        </button>
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
+        <h1>Related Links</h1>
           </div>
+        <a 
+          href="/chatbotL" 
+          style={styles.sidebarLink} 
+          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
+          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        >
+          Language Site
+        </a>
+        <a 
+          href="https://cybercap.qc.ca/" 
+          style={styles.sidebarLink} 
+          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
+          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        >
+          CyberCap
+        </a>
+      </div>
+
+      {/* Main Content */}
+      <div id="main" style={{ transition: 'margin-left 0.5s', marginLeft: sidebarOpen ? '250px' : '0' }}>
+        {/* Header with Hamburger Menu */}
+        <div style={styles.headerWithMenu}>
+          <button style={styles.hamburgerBtn} onClick={toggleSidebar}>
+            &#9776;
+          </button>
         </div>
-        {/* Chatbot on the right */}
-        <div style={styles.chatContainer}>
-          <div className="App">
-            <div style={styles.container}>
-              <div style={styles.header}>
-                <span>Cybersecurity Exercise Chatbot Assistant</span>
-              </div>
-              <div style={styles.messages} id="messages">
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
-                    dangerouslySetInnerHTML={renderMarkdown(msg.text)}
+        <div style={styles.headerTitle}>
+          <h1>
+            <span style={styles.headerLink}>Cybersecurity Site</span>
+            <a href="/commentutiliserCS" style={styles.headerLink}>
+              How to use
+            </a></h1>
+          </div>
+        <div style={styles.bgStyle}>
+          {/* Image and Chatbot Containers */}
+          <div style={styles.wrapper}>
+            {/* Image with caption on the left */}
+            <div style={styles.imageContainer}>
+              <ImageWithCaption 
+                imageUrl={'/kali-linux-2022-4-gnome.jpg'} 
+                altText={'GNOME Shell'}
+                caption={'Every part of GNOME Shell has been designed to make it simple and easy to use. The Activities Overview is an easy way to access all your basic tasks. A press of a button is all it takes to view your open windows, launch applications, or check if you have new messages. Having everything in one place is convenient and means that you don\'t have to learn your way through a maze of different technologies. (kali.org)'} 
+              />
+            </div>
+          </div>
+          {/* Chatbot on the right */}
+          <div style={styles.chatContainer}>
+            <div className="App">
+              <div style={styles.container}>
+                <div style={styles.header}>
+                  <span>Cybersecurity Exercise Chatbot Assistant</span>
+                </div>
+                <div style={styles.messages} id="messages">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
+                      dangerouslySetInnerHTML={renderMarkdown(msg.text)}
+                    />
+                  ))}
+                  <div ref={messagesEndRef} />
+                  {isTyping && (
+                    <div style={styles.typingIndicator}>Assistant is typing...</div>
+                  )}
+                </div>
+                <div style={styles.inputContainer}>
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Type your message here"
+                    style={styles.input}
                   />
-                ))}
-                <div ref={messagesEndRef} />
-                {isTyping && (
-                  <div style={styles.typingIndicator}>Assistant is typing...</div>
-                )}
-              </div>
-              <div style={styles.inputContainer}>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Type your message here"
-                  style={styles.input}
-                />
-                <button onClick={handleSendMessage} style={styles.button}>
-                  Send
-                </button>
-                <RefreshButton />
+                  <button onClick={handleSendMessage} style={styles.button}>
+                    Send
+                  </button>
+                  <RefreshButton />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </div> {/* End of main */}
     </div>
   );
 };

@@ -170,6 +170,9 @@ const ChatbotL: React.FC = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+
   useEffect(() => {
     const app = new ChatApp();
     app.fetchdescriptionL().then(() => {
@@ -211,25 +214,69 @@ const ChatbotL: React.FC = () => {
       handleSendMessage();
     }
   };
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
   const renderMarkdown = (text: string) => {
     const html = marked(text);
     return { __html: html };
   };
 
   return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
+
+    {/* Sidebar */}
+    <div
+        style={{
+          ...styles.sidebar,
+          width: sidebarOpen ? '250px' : '0',
+        }}
+      >
+        <button style={styles.closeBtn} onClick={closeSidebar}>
+          &times;
+        </button>
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
+        <h1>Related Links</h1>
+          </div>
+        <a 
+          href="/chatbotCS" 
+          style={styles.sidebarLink} 
+          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
+          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        >
+          Cybersecurity Site
+        </a>
+        <a 
+          href="https://cybercap.qc.ca/" 
+          style={styles.sidebarLink} 
+          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
+          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        >
+          CyberCap
+        </a>
+      </div>
+
+      {/* Main Content */}
+      <div id="main" style={{ transition: 'margin-left 0.5s', marginLeft: sidebarOpen ? '250px' : '0' }}>
+        {/* Header with Hamburger Menu */}
+        <div style={styles.headerWithMenu}>
+          <button style={styles.hamburgerBtn} onClick={toggleSidebar}>
+            &#9776;
+          </button>
+        </div>
     <h1>
-      <a style={{ color: 'darkred', marginRight: '10px' }}>
-        Language Site
-      </a>
-      <a href="/commentutiliserL" style={{ color: 'darkred', marginRight: '10px' }}>
-        How to use
-      </a>
+            <span style={styles.headerLink}>Language Site</span>
+            <a href="/commentutiliserL" style={styles.headerLink}>
+              How to use
+            </a>
     </h1>
     <div
   style={{
     background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
-    minHeight: '90vh',
+    minHeight: '85.87vh',
     display: 'flex',
     alignItems: 'normal',
     justifyContent: 'left',
@@ -286,9 +333,10 @@ const ChatbotL: React.FC = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
-
+// Styles Object
 const styles: { [key: string]: React.CSSProperties } = {
   wrapper: {
     display: 'flex',
@@ -296,9 +344,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   imageContainer: {
     flex: 1,
-
     padding: '4px',
-    marginRight: '20px', // Space between the image and chatbot
+    marginRight: '0px', // Space between the image and chatbot
   },
   chatContainer: {
     flex: 1,
@@ -341,6 +388,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderTop: '1px solid #eee',
     backgroundColor: '#f7f7f7',
   },
+  bgStyle: {
+    minHeight: '80vh',
+    display: 'flex',
+    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
+    backgroundSize: '30%', // Adjust size of gradient
+  },
   input: {
     flex: 1,
     padding: '8px',
@@ -357,7 +410,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
   },
   userBubble: {
-    backgroundColor: '#e1ffc7',
+    backgroundColor: '#C1E3C6',
     borderRadius: '8px',
     padding: '10px',
     margin: '5px 0',
@@ -372,6 +425,66 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: 'flex-start',
     maxWidth: '80%',
   },
+  // New styles for the sidebar and hamburger menu
+  sidebar: {
+    height: '100%', 
+    width: '0', // Initial width is 0
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    backgroundColor: '#111', 
+    overflowX: 'hidden', 
+    transition: '0.5s', 
+    paddingTop: '60px',
+    zIndex: 1000,
+  },
+  sidebarLink: {
+    padding: '8px 8px 8px 32px',
+    textDecoration: 'none',
+    fontSize: '25px',
+    color: '#818181',
+    display: 'block',
+    transition: '0.3s',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '20px',
+    right: '25px',
+    fontSize: '36px',
+    marginLeft: '50px',
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  hamburgerBtn: {
+    fontSize: '30px',
+    cursor: 'pointer',
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    padding: '10px',
+  },
+  headerWithMenu: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#C1E3C6',
+    padding: '10px',
+    position: 'relative',
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'left',
+  },
+  headerLink: {
+    color: 'darkred',
+    marginLeft: '20px',
+  },
 };
+
 
 export default ChatbotL;

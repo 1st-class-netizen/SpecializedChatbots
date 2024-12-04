@@ -182,13 +182,13 @@ const ChatbotL: React.FC = () => {
         Language Site
       </a>
       <a href="/chatbotL" style={{ color: 'darkred', marginRight: '10px' }}>
-        Language Exercise Chatbot Assistant
+        Back
       </a>
     </h1>
     <div
   style={{
     background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
-    minHeight: '90vh',
+    minHeight: '92.17vh',
     display: 'flex',
     alignItems: 'normal',
     justifyContent: 'left',
@@ -201,7 +201,7 @@ const ChatbotL: React.FC = () => {
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
             altText={'A question mark'}
-            caption={'To use this language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
+            caption={'To use the language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
           />
         </div>
         </div>

@@ -61,7 +61,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#f7f7f7',
   },
   bgStyle: {
-    minHeight: '90vh',
+    minHeight: '92.17vh',
     display: 'flex',
     background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
     backgroundSize: '30% 100%', // Adjust size of gradient
@@ -266,12 +266,13 @@ class ChatApp {
 const ChatbotCS: React.FC = () => {
 
   return ( <div style={{ backgroundColor: '#E3D7C1', padding: '10px' }}>
+    
     <h1>
       <a style={{ color: 'midnightblue', marginRight: '10px' }}>
         Cybersecurity Site
       </a>
       <a href="/chatbotCS" style={{ color: 'midnightblue', marginRight: '10px' }}>
-        Cybersecurity Exercise Chatbot Assistant
+        Back
       </a>
     </h1>
     <div style={styles.bgStyle}>
@@ -282,7 +283,7 @@ const ChatbotCS: React.FC = () => {
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
             altText={'A question mark'}
-            caption={'To use this cybersecurity exercise chatbot, prepare by refreshing your memory on a glossary of cybersecurity terms and test your memory by follow the chatbot\'s instructions to complete the cybersecurity exercise. You may also do this preparation by showing intent do so in response to one of the chatbot\'s questions.'} 
+            caption={'To use the cybersecurity exercise chatbot, prepare by refreshing your memory on a glossary of cybersecurity terms and test your memory by follow the chatbot\'s instructions to complete the cybersecurity exercise. You may also do this preparation by showing intent do so in response to one of the chatbot\'s questions.'} 
           />
         </div>
         </div>
