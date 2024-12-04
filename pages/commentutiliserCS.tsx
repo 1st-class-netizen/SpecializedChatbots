@@ -9,6 +9,95 @@ interface ChatMessage {
   text: string;
 }
 
+const styles: { [key: string]: React.CSSProperties } = {
+  wrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  imageContainer: {
+    flex: 1,
+    padding: '4px',
+    marginRight: '0px', // Space between the image and chatbot
+  },
+  chatContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'top',
+  },
+  container: {
+    width: '600px',
+    marginTop: '20px',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    fontFamily: 'Arial, sans-serif',
+    position: 'relative',
+  },
+  header: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: '#E3D7C1',
+    padding: '10px',
+  },
+  messages: {
+    flex: 1,
+    overflowY: 'auto',
+    padding: '10px',
+    backgroundColor: '#fff',
+  },
+  typingIndicator: {
+    color: '#888',
+    fontStyle: 'italic',
+    margin: '10px 0',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    display: 'flex',
+    padding: '10px',
+    borderTop: '1px solid #eee',
+    backgroundColor: '#f7f7f7',
+  },
+  bgStyle: {
+    minHeight: '90vh',
+    display: 'flex',
+    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
+    backgroundSize: '30% 100%', // Adjust size of gradient
+  },
+  input: {
+    flex: 1,
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    marginRight: '10px',
+  },
+  button: {
+    padding: '8px 15px',
+    border: 'none',
+    backgroundColor: '#4082bf',
+    color: '#fff',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  userBubble: {
+    backgroundColor: '#E3D7C1',
+    borderRadius: '8px',
+    padding: '10px',
+    margin: '5px 0',
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+  },
+  botBubble: {
+    backgroundColor: '#f1f0f0',
+    borderRadius: '8px',
+    padding: '10px',
+    margin: '5px 0',
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
+  },
+};
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
     window.location.reload(); // This refreshes the page
@@ -50,7 +139,7 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
           maxHeight: 'fit-content',
           fontSize: '16pt',
           marginLeft: '16px', // Space between the image and the caption
-          backgroundColor: '#C1E3C6',
+          backgroundColor: '#E3D7C1',
           padding: '8px 16px',
           borderRadius: '8px',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the caption
@@ -176,32 +265,24 @@ class ChatApp {
 // Chatbot component
 const ChatbotCS: React.FC = () => {
 
-  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
+  return ( <div style={{ backgroundColor: '#E3D7C1', padding: '10px' }}>
     <h1>
-      <a style={{ color: 'darkred', marginRight: '10px' }}>
-        Language Site
+      <a style={{ color: 'midnightblue', marginRight: '10px' }}>
+        Cybersecurity Site
       </a>
-      <a href="/chatbotCS" style={{ color: 'darkred', marginRight: '10px' }}>
-        Language Exercise Chatbot Assistant
+      <a href="/chatbotCS" style={{ color: 'midnightblue', marginRight: '10px' }}>
+        Cybersecurity Exercise Chatbot Assistant
       </a>
     </h1>
-    <div
-  style={{
-    background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
-    minHeight: '90vh',
-    display: 'flex',
-    alignItems: 'normal',
-    justifyContent: 'left',
-  }}
->
+    <div style={styles.bgStyle}>
       <div style={styles.wrapper}>
         
         {/* Image with caption on the left */}
         <div style={styles.imageContainer}>
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
-            altText={'A clay tablet with cuneiform'}
-            caption={'To use this language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
+            altText={'A question mark'}
+            caption={'To use this cybersecurity exercise chatbot, prepare by refreshing your memory on a glossary of cybersecurity terms and test your memory by follow the chatbot\'s instructions to complete the cybersecurity exercise. You may also do this preparation by showing intent do so in response to one of the chatbot\'s questions.'} 
           />
         </div>
         </div>
@@ -212,88 +293,5 @@ const ChatbotCS: React.FC = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  imageContainer: {
-    flex: 1,
-    padding: '4px',
-    marginRight: '20px', // Space between the image and chatbot
-  },
-  chatContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'top',
-  },
-  container: {
-    width: '600px',
-    marginTop: '20px',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: 'Arial, sans-serif',
-    position: 'relative',
-  },
-  header: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    backgroundColor: '#9ED3A6',
-    padding: '10px',
-  },
-  messages: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: '10px',
-    backgroundColor: '#fff',
-  },
-  typingIndicator: {
-    color: '#888',
-    fontStyle: 'italic',
-    margin: '10px 0',
-    textAlign: 'center',
-  },
-  inputContainer: {
-    display: 'flex',
-    padding: '10px',
-    borderTop: '1px solid #eee',
-    backgroundColor: '#f7f7f7',
-  },
-  input: {
-    flex: 1,
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginRight: '10px',
-  },
-  button: {
-    padding: '8px 15px',
-    border: 'none',
-    backgroundColor: '#4082bf',
-    color: '#fff',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  userBubble: {
-    backgroundColor: '#e1ffc7',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-end',
-    maxWidth: '80%',
-  },
-  botBubble: {
-    backgroundColor: '#f1f0f0',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-start',
-    maxWidth: '80%',
-  },
-};
 
 export default ChatbotCS;

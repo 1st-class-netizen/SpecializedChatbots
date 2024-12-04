@@ -38,13 +38,12 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
         style={{
           textAlign: 'center', 
           fontStyle: 'italic', 
-          marginTop: '8px',
           backgroundColor: 'white', // White background behind the text
           padding: '8px 16px', // Padding around the caption text
           borderRadius: '8px', // Rounded corners
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the "card"
           maxWidth: '300px', // Match the image width
-          margin: '0 auto', // Center the caption within the image's width
+          margin: '8px auto 0 auto', // Centers the figcaption
         }}
       >
         {caption}

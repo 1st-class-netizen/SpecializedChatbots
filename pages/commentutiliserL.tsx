@@ -200,7 +200,7 @@ const ChatbotL: React.FC = () => {
         <div style={styles.imageContainer}>
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
-            altText={'A clay tablet with cuneiform'}
+            altText={'A question mark'}
             caption={'To use this language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
           />
         </div>

@@ -9,6 +9,12 @@ interface ChatMessage {
   text: string;
 }
 
+interface ImageWithCaptionProps {
+  imageUrl: string;
+  caption: string;
+  altText: string;
+}
+
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
     window.location.reload(); // This refreshes the page
@@ -25,32 +31,116 @@ const RefreshButton: React.FC = () => {
   );
 };
 
-interface ImageWithCaptionProps {
-  imageUrl: string;
-  caption: string;
-  altText: string;
-}
 const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, altText }) => {
   return (
     <figure>
-      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '600px', height: 'auto' }} />
+      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '889px', height: 'auto' }} />
       <figcaption 
         style={{
           textAlign: 'center', 
           fontStyle: 'italic', 
-          marginTop: '8px',
           backgroundColor: 'white', // White background behind the text
           padding: '8px 16px', // Padding around the caption text
           borderRadius: '8px', // Rounded corners
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the "card"
-          maxWidth: '300px', // Match the image width
-          margin: '0 auto', // Center the caption within the image's width
+          maxWidth: '500px', // Match the image width
+          margin: '8px auto 0 auto', // Centers the figcaption
         }}
       >
         {caption}
       </figcaption>
     </figure>
   );
+};
+
+const styles: { [key: string]: React.CSSProperties } = {
+  wrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  imageContainer: {
+    flex: 1,
+    padding: '4px',
+    marginRight: '0px', // Space between the image and chatbot
+  },
+  chatContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'top',
+  },
+  container: {
+    width: '600px',
+    marginTop: '20px',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    fontFamily: 'Arial, sans-serif',
+    position: 'relative',
+  },
+  header: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: '#E3D7C1',
+    padding: '10px',
+  },
+  messages: {
+    flex: 1,
+    overflowY: 'auto',
+    padding: '10px',
+    backgroundColor: '#fff',
+  },
+  typingIndicator: {
+    color: '#888',
+    fontStyle: 'italic',
+    margin: '10px 0',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    display: 'flex',
+    padding: '10px',
+    borderTop: '1px solid #eee',
+    backgroundColor: '#f7f7f7',
+  },
+  bgStyle: {
+    minHeight: '90vh',
+    display: 'flex',
+    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
+    backgroundSize: '30% 100%', // Adjust size of gradient
+  },
+  input: {
+    flex: 1,
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    marginRight: '10px',
+  },
+  button: {
+    padding: '8px 15px',
+    border: 'none',
+    backgroundColor: '#4082bf',
+    color: '#fff',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  userBubble: {
+    backgroundColor: '#E3D7C1',
+    borderRadius: '8px',
+    padding: '10px',
+    margin: '5px 0',
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+  },
+  botBubble: {
+    backgroundColor: '#f1f0f0',
+    borderRadius: '8px',
+    padding: '10px',
+    margin: '5px 0',
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
+  },
 };
 
 // Chat application logic
@@ -114,7 +204,6 @@ class ChatApp {
       ],
     });
     const requestBody = {
-      
       contents: contents,
       systemInstruction: {
         role: 'user',
@@ -168,6 +257,7 @@ const ChatbotCS: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
   const [chatApp, setChatApp] = useState<ChatApp | null>(null);
+  const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -181,6 +271,12 @@ const ChatbotCS: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    if (pageRefresh) {
+      window.location.reload();
+    }
+  }, [pageRefresh]);
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== '') {
@@ -202,6 +298,12 @@ const ChatbotCS: React.FC = () => {
           newBotMessage,
         ]);
         setIsTyping(false);
+
+        if (responseText.includes("ZXC")) {
+          setPageRefresh(true);
+        } else {
+          setPageRefresh(false);
+        }
       }
     }
   };
@@ -218,33 +320,30 @@ const ChatbotCS: React.FC = () => {
     return { __html: html };
   };
 
-  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
-    <h1>
-      <a style={{ color: 'darkred', marginRight: '10px' }}>
-        Cybersecurity Site
-      </a>
-      <a href="/commentutiliserCS" style={{ color: 'darkred', marginRight: '10px' }}>
-        How to use
-      </a>
-    </h1>
-    
-    <div style={styles.bgStyle}>
-      {/* Repeat `@` symbols in 3 columns */}
-
-      <div style={styles.wrapper}>
-      
-        {/* Image with caption on the left */}
-        <div style={styles.imageContainer}>
-          <ImageWithCaption 
-            imageUrl={'/kali-desktop-xfce.jpg'} 
-            altText={'Xfce is a lightweight desktop environment for UNIX-like operating systems. It aims to be fast and low on system resources, while still being visually appealing and user friendly.'}
-            caption={'Xfce consists of separately packaged parts that together provide all functions of the desktop environment, but can be selected in subsets to suit user needs and preferences. This is Kali\'s default desktop environment. (kali.org)'} 
-          />
-        </div>
+  return (
+    <div style={{ backgroundColor: '#E3D7C1', padding: '10px' }}>
+      <h1>
+        <a style={{ color: 'midnightblue', marginRight: '10px' }}>
+          Cybersecurity Site
+        </a>
+        <a href="/commentutiliserCS" style={{ color: 'midnightblue', marginRight: '10px' }}>
+          How to use
+        </a>
+      </h1>
+      <div style={styles.bgStyle}>
+        {/* Repeat `@` symbols in 3 columns */}
+        <div style={styles.wrapper}>
+          {/* Image with caption on the left */}
+          <div style={styles.imageContainer}>
+            <ImageWithCaption 
+              imageUrl={'/kali-desktop-xfce.jpg'} 
+              altText={'Xfce is a lightweight desktop environment for UNIX-like operating systems. It aims to be fast and low on system resources, while still being visually appealing and user friendly.'}
+              caption={'Xfce consists of separately packaged parts that together provide all functions of the desktop environment, but can be selected in subsets to suit user needs and preferences. This is Kali\'s default desktop environment. (kali.org)'} 
+            />
+          </div>
         </div>
         {/* Chatbot on the right */}
         <div style={styles.chatContainer}>
-          
           <div className="App">
             <div style={styles.container}>
               <div style={styles.header}>
@@ -278,102 +377,11 @@ const ChatbotCS: React.FC = () => {
                 <RefreshButton />
               </div>
             </div>
-          </div></div>
+          </div>
         </div>
       </div>
+    </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-
-  wrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  imageContainer: {
-    flex: 1,
-
-    padding: '4px',
-    marginRight: '20px', // Space between the image and chatbot
-  },
-  chatContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'top',
-  },
-  container: {
-    width: '600px',
-    marginTop: '20px',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: 'Arial, sans-serif',
-    position: 'relative',
-  },
-  header: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    backgroundColor: '#C1E3C6',
-    padding: '10px',
-  },
-  messages: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: '10px',
-    backgroundColor: '#fff',
-  },
-  typingIndicator: {
-    color: '#888',
-    fontStyle: 'italic',
-    margin: '10px 0',
-    textAlign: 'center',
-  },
-  inputContainer: {
-    display: 'flex',
-    padding: '10px',
-    borderTop: '1px solid #eee',
-    backgroundColor: '#f7f7f7',
-  },
-  bgStyle: {
-    minHeight: '90vh',
-    display: 'flex',
-    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
-    backgroundSize: '30% 100%', // Adjust size of gradient
-  },
-  input: {
-    flex: 1,
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginRight: '10px',
-  },
-  button: {
-    padding: '8px 15px',
-    border: 'none',
-    backgroundColor: '#4082bf',
-    color: '#fff',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  userBubble: {
-    backgroundColor: '#e1ffc7',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-end',
-    maxWidth: '80%',
-  },
-  botBubble: {
-    backgroundColor: '#f1f0f0',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-start',
-    maxWidth: '80%',
-  },
 };
 
 export default ChatbotCS;
