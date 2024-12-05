@@ -407,6 +407,7 @@ const ChatbotCS: React.FC = () => {
           width: sidebarOpen ? '250px' : '0',
           display: 'flex',          // Add flexbox
     flexDirection: 'column',  // Arrange children in a column
+    height: '80vh', 
         }}
       >
         <button style={styles.closeBtn} onClick={closeSidebar}>
