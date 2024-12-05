@@ -402,40 +402,32 @@ const ChatbotCS: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        style={{
-          ...styles.sidebar,
-          width: sidebarOpen ? '250px' : '0',
-          display: 'flex',          // Add flexbox
+  style={{
+    ...styles.sidebar,
+    width: sidebarOpen ? '250px' : '0',
+    display: 'flex',          // Add flexbox
     flexDirection: 'column',  // Arrange children in a column
-    height: '80vh', 
-        }}
-      >
-        <button style={styles.closeBtn} onClick={closeSidebar}>
-          &times;
-        </button>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
-        <h1>Related Links</h1>
-          </div>
-        <a 
-          href="/chatbotL" 
-          style={styles.sidebarLink} 
-          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
-          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
-        >
-          Language Site
-        </a>
-        <a 
-          href="https://cybercap.qc.ca/" 
-          style={styles.sidebarLink} 
-          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
-          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
-        >
-          CyberCap
-        </a>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px', marginTop: 'auto',}}  >
-        By Sam
-          </div>
-      </div>
+    height: '100vh',          // Full viewport height
+  }}
+>
+  <button style={styles.closeBtn} onClick={closeSidebar}>
+    &times;
+  </button>
+
+  <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}>
+    <h1>Related Links</h1>
+  </div>
+
+  <div
+    style={{
+      color: 'white',
+      padding: '8px 8px 8px 32px',
+      marginTop: 'auto', // Push "By Sam" to the bottom
+    }}
+  >
+    By Sam
+  </div>
+</div>
 
       {/* Main Content */}
       <div id="main" style={{ transition: 'margin-left 0.5s', marginLeft: sidebarOpen ? '250px' : '0' }}>
