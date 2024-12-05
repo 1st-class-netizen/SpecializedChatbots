@@ -18,7 +18,9 @@ interface ImageWithCaptionProps {
 // RefreshButton Component
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
-    window.location.reload(); // This refreshes the page
+    if (typeof window !== 'undefined') {
+      window.location.reload(); // Refreshes the page
+    }
   };
 
   return (
@@ -26,7 +28,7 @@ const RefreshButton: React.FC = () => {
       <img 
         src="/85272_refresh_icon.png" 
         alt="Refresh" 
-        style={{ width: '50px', height: '50px' }} // Adjust the size of the image as needed
+        style={{ width: '50px', height: '50px' }} // Adjust the size as needed
       />
     </button>
   );
@@ -41,12 +43,12 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
         style={{
           textAlign: 'center', 
           fontStyle: 'italic', 
-          backgroundColor: 'white', // White background behind the text
-          padding: '8px 16px', // Padding around the caption text
-          borderRadius: '8px', // Rounded corners
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the "card"
-          maxWidth: '500px', // Match the image width
-          margin: '8px auto 0 auto', // Centers the figcaption
+          backgroundColor: 'white',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          maxWidth: '500px',
+          margin: '8px auto 0 auto',
         }}
       >
         {caption}
@@ -64,7 +66,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   imageContainer: {
     flex: 1,
     padding: '4px',
-    marginRight: '0px', // Space between the image and chatbot
+    marginRight: '0px',
   },
   chatContainer: {
     flex: 1,
@@ -108,10 +110,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#f7f7f7',
   },
   bgStyle: {
-    minHeight: '100vh',
-    display: 'flex',
-    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
-    backgroundSize: '30%', // Adjust size of gradient
   },
   input: {
     flex: 1,
@@ -144,10 +142,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: 'flex-start',
     maxWidth: '80%',
   },
-  // New styles for the sidebar and hamburger menu
+  // Sidebar styles
   sidebar: {
     height: '100%', 
-    width: '0', // Initial width is 0
+    width: '0',
     position: 'fixed', 
     top: 0, 
     left: 0, 
@@ -212,7 +210,7 @@ class ChatApp {
 
   constructor() {
     this.descriptionL = '';
-    this.apiKey =  process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY; // Replace with your actual API key
+    this.apiKey =  process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY; 
     this.apiUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent';
   }
@@ -230,7 +228,6 @@ class ChatApp {
     }
   }
 
-  // Helper method to escape special characters
   escapeString(str: string): string {
     return str
       .replace(/\\/g, '\\\\')
@@ -314,8 +311,6 @@ class ChatApp {
 
 // ChatbotCS Component
 const ChatbotCS: React.FC = () => {
-
-  // Chatbot state variables
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
@@ -323,6 +318,22 @@ const ChatbotCS: React.FC = () => {
   const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const initialHeight = typeof window !== 'undefined' ? window.innerHeight : 800; // fallback if SSR
+  const [height, setHeight] = useState<number>(initialHeight);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setHeight(window.innerHeight);
+      };
+
+      window.addEventListener('resize', handleResize);
+    
+      // Cleanup
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -339,7 +350,7 @@ const ChatbotCS: React.FC = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (pageRefresh) {
+    if (pageRefresh && typeof window !== 'undefined') {
       window.location.reload();
     }
   }, [pageRefresh]);
@@ -395,27 +406,24 @@ const ChatbotCS: React.FC = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#E3D7C1', padding: '10px'}}>
-
-
+    <div style={{ 
+      backgroundColor: '#E3D7C1'}}>
 
       {/* Sidebar */}
       <div
         style={{
           ...styles.sidebar,
           width: sidebarOpen ? '250px' : '0',
-          flexDirection: 'column',  // Arrange children in a column
-          height: '100vh',          // Full viewport height
-    display: 'flex',          // Add flexbox
-
+          flexDirection: 'column',
+          display: 'flex',
         }}
       >
         <button style={styles.closeBtn} onClick={closeSidebar}>
           &times;
         </button>
         <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
-        <h1>Related Links</h1>
-          </div>
+          <h1>Related Links</h1>
+        </div>
         <a 
           href="/chatbotL" 
           style={styles.sidebarLink} 
@@ -433,13 +441,12 @@ const ChatbotCS: React.FC = () => {
           CyberCap
         </a>
         <div style={{ color: 'white', padding: '8px 8px 8px 32px', marginTop: '75vh', }}  >
-        <h3>By Sam</h3>
-          </div>
+          <h3>By Sam</h3>
+        </div>
       </div>
 
       {/* Main Content */}
       <div id="main" style={{ transition: 'margin-left 0.5s', marginLeft: sidebarOpen ? '250px' : '0' }}>
-        {/* Header with Hamburger Menu */}
         <div style={styles.headerWithMenu}>
           <button style={styles.hamburgerBtn} onClick={toggleSidebar}>
             &#9776;
@@ -450,12 +457,16 @@ const ChatbotCS: React.FC = () => {
             <span style={styles.headerLink}>Cybersecurity Site</span>
             <a href="/commentutiliserCS" style={styles.headerLink}>
               How to use
-            </a></h1>
-          </div>
-        <div style={styles.bgStyle}>
-          {/* Image and Chatbot Containers */}
+            </a>
+          </h1>
+        </div>
+        <div style={{
+          minHeight: `${height-140}px`,
+          display: 'flex',
+          background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
+          backgroundSize: '30%',
+        }}>
           <div style={styles.wrapper}>
-            {/* Image with caption on the left */}
             <div style={styles.imageContainer}>
               <ImageWithCaption 
                 imageUrl={'/kali-linux-2022-4-gnome.jpg'} 
@@ -464,7 +475,6 @@ const ChatbotCS: React.FC = () => {
               />
             </div>
           </div>
-          {/* Chatbot on the right */}
           <div style={styles.chatContainer}>
             <div className="App">
               <div style={styles.container}>
