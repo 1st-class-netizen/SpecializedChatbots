@@ -551,7 +551,6 @@ const ChatbotCS: React.FC = () => {
           </div>
         </div>
       </div>{" "}
-      {/* End of main */}
     </div>
   );
 };

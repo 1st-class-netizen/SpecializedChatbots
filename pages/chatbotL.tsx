@@ -11,7 +11,10 @@ interface ChatMessage {
 
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
+    if (typeof window !== "undefined") {
+
     window.location.reload(); // This refreshes the page
+  }
   };
 
   return (
@@ -25,25 +28,29 @@ const RefreshButton: React.FC = () => {
   );
 };
 
-interface ImageWithCaptionProps {
-  imageUrl: string;
-  caption: string;
-  altText: string;
-}
-const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, altText }) => {
+// ImageWithCaption Component
+const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({
+  imageUrl,
+  caption,
+  altText,
+}) => {
   return (
     <figure>
-      <img src={imageUrl} title={altText} style={{ width: '100%', maxWidth: '600px', height: 'auto' }} />
-      <figcaption 
+      <img
+        src={imageUrl}
+        title={altText}
+        style={{ width: "100%", maxWidth: "1280px", height: "auto" }}
+      />
+      <figcaption
         style={{
-          textAlign: 'center', 
-          fontStyle: 'italic', 
-          backgroundColor: 'white', // White background behind the text
-          padding: '8px 16px', // Padding around the caption text
-          borderRadius: '8px', // Rounded corners
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: soft shadow around the "card"
-          maxWidth: '300px', // Match the image width
-          margin: '8px auto 0 auto', // Centers the figcaption
+          textAlign: "center",
+          fontStyle: "italic",
+          backgroundColor: "white",
+          padding: "8px 16px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          maxWidth: "500px",
+          margin: "8px auto 0 auto",
         }}
       >
         {caption}
@@ -51,6 +58,139 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
     </figure>
   );
 };
+
+
+// Styles Object
+const styles: { [key: string]: React.CSSProperties } = {
+  wrapper: {
+    display: "flex",
+    alignItems: "flex-start",
+  },
+  imageContainer: {
+    flex: 1,
+    padding: "4px",
+    marginRight: "0px",
+  },
+  chatContainer: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "top",
+  },
+  container: {
+    width: "600px",
+    marginTop: "20px",
+    borderRadius: "8px",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    fontFamily: "Arial, sans-serif",
+    position: "relative",
+  },
+  header: {
+    fontWeight: "bold",
+    textAlign: "center",
+    backgroundColor: "#C1E3C6",
+    padding: "10px",
+  },
+  messages: {
+    flex: 1,
+    overflowY: "auto",
+    padding: "10px",
+    backgroundColor: "#fff",
+  },
+  typingIndicator: {
+    color: "#888",
+    fontStyle: "italic",
+    margin: "10px 0",
+    textAlign: "center",
+  },
+  inputContainer: {
+    display: "flex",
+    padding: "10px",
+    borderTop: "1px solid #eee",
+    backgroundColor: "#f7f7f7",
+  },
+  bgStyle: {},
+  input: {
+    flex: 1,
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    marginRight: "10px",
+  },
+  button: {
+    padding: "8px 15px",
+    border: "none",
+    backgroundColor: "#4082bf",
+    color: "#fff",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  userBubble: {
+    backgroundColor: "#E3D7C1",
+    borderRadius: "8px",
+    padding: "10px",
+    margin: "5px 0",
+    alignSelf: "flex-end",
+    maxWidth: "80%",
+  },
+  botBubble: {
+    backgroundColor: "#f1f0f0",
+    borderRadius: "8px",
+    padding: "10px",
+    margin: "5px 0",
+    alignSelf: "flex-start",
+    maxWidth: "80%",
+  },
+  sidebarLink: {
+    padding: "8px 8px 8px 32px",
+    textDecoration: "none",
+    fontSize: "25px",
+    color: "#818181",
+    display: "block",
+    transition: "0.3s",
+  },
+  closeBtn: {
+    position: "absolute",
+    top: "20px",
+    right: "25px",
+    fontSize: "36px",
+    marginLeft: "50px",
+    background: "none",
+    border: "none",
+    color: "#fff",
+    cursor: "pointer",
+  },
+  hamburgerBtn: {
+    fontSize: "30px",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    color: "#fff",
+    padding: "10px",
+  },
+  headerWithMenu: {
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: "#C1E3C6",
+    position: "relative",
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "left",
+  },
+  headerLink: {
+    color: "darkred",
+    marginLeft: "20px",
+  },
+};
+
 
 // Chat application logic
 class ChatApp {
@@ -153,7 +293,7 @@ class ChatApp {
 
       return data.candidates[0].content.parts
         .map((part: any) => part.text)
-        .join(' ');
+        .join(" ");
     } catch (error) {
       console.error('Error:', error);
       return 'Error fetching response';
@@ -164,11 +304,31 @@ class ChatApp {
 // Chatbot component
 const ChatbotL: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>(
+    []
+  );
   const [chatApp, setChatApp] = useState<ChatApp | null>(null);
+  const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const initialHeight =
+  typeof window !== "undefined" ? window.innerHeight : 940; // fallback if SSR
+const [height, setHeight] = useState<number>(initialHeight);
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const handleResize = () => {
+      setHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }
+}, []);
 
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -184,26 +344,45 @@ const ChatbotL: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    if (pageRefresh && typeof window !== "undefined") {
+      window.location.reload();
+    }
+  }, [pageRefresh]);
+
+
   const handleSendMessage = async () => {
-    if (inputValue.trim() !== '') {
-      const newUserMessage: ChatMessage = { type: 'question', text: inputValue };
+    if (inputValue.trim() !== "") {
+      const newUserMessage: ChatMessage = {
+        type: "question",
+        text: inputValue,
+      };
       setMessages((prevMessages) => [...prevMessages, newUserMessage]);
       setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]);
-      setInputValue('');
+      setInputValue("");
 
       if (chatApp) {
         setIsTyping(true);
-        const responseText = await chatApp.sendMessage(
-          inputValue,
-          [...conversationHistory, newUserMessage]
-        );
-        const newBotMessage: ChatMessage = { type: 'response', text: responseText };
+        const responseText = await chatApp.sendMessage(inputValue, [
+          ...conversationHistory,
+          newUserMessage,
+        ]);
+        const newBotMessage: ChatMessage = {
+          type: "response",
+          text: responseText,
+        };
         setMessages((prevMessages) => [...prevMessages, newBotMessage]);
         setConversationHistory((prevHistory) => [
           ...prevHistory,
           newBotMessage,
         ]);
         setIsTyping(false);
+
+        if (responseText.includes("ZXC")) {
+          setPageRefresh(true);
+        } else {
+          setPageRefresh(false);
+        }
       }
     }
   };
@@ -226,13 +405,27 @@ const ChatbotL: React.FC = () => {
     return { __html: html };
   };
 
-  return (<div style={{ backgroundColor: '#C1E3C6'}}>
-
-    {/* Sidebar */}
+  return (
     <div
+      style={{
+        backgroundColor: "#C1E3C6",
+      }}
+      >
+        {/* Sidebar */}
+      <div
         style={{
-          ...styles.sidebar,
-          width: sidebarOpen ? '250px' : '0',
+          height: height - 60,
+          width: sidebarOpen ? "250px" : "0",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          backgroundColor: "#111",
+          overflowX: "hidden",
+          transition: "0.5s",
+          paddingTop: "60px",
+          zIndex: 1000,
+          flexDirection: "column",
+          display: "flex",
         }}
       >
         <button style={styles.closeBtn} onClick={closeSidebar}>
@@ -257,34 +450,47 @@ const ChatbotL: React.FC = () => {
         >
           CyberCap
         </a>
+        <div
+          style={{
+            color: "white",
+            padding: "8px 8px 8px 32px",
+            marginTop: "auto",
+          }}
+        >
+          <h3>By Sam</h3>
+        </div>
       </div>
-
       {/* Main Content */}
-      <div id="main" style={{ transition: 'margin-left 0.5s', marginLeft: sidebarOpen ? '250px' : '0' }}>
-        {/* Header with Hamburger Menu */}
+      <div
+        id="main"
+        style={{
+          transition: "margin-left 0.5s",
+          marginLeft: sidebarOpen ? "250px" : "0",
+        }}
+      >
         <div style={styles.headerWithMenu}>
           <button style={styles.hamburgerBtn} onClick={toggleSidebar}>
             &#9776;
           </button>
         </div>
-    <h1>
+        <div style={styles.headerTitle}>
+          <h1>
             <span style={styles.headerLink}>Language Site</span>
             <a href="/commentutiliserL" style={styles.headerLink}>
               How to use
             </a>
-    </h1>
+          </h1>
+        </div>
     <div
   style={{
     background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
-    minHeight: '85.87vh',
+    minHeight: height-140,
     display: 'flex',
     alignItems: 'normal',
     justifyContent: 'left',
   }}
 >
       <div style={styles.wrapper}>
-        
-        {/* Image with caption on the left */}
         <div style={styles.imageContainer}>
           <ImageWithCaption 
             imageUrl={'/cuneiform-tablet-assyria-905.jpg'} 
@@ -300,191 +506,49 @@ const ChatbotL: React.FC = () => {
             <div style={styles.container}>
               <div style={styles.header}>
                 <span>Language Exercise Chatbot Assistant</span>
-              </div>
-              <div style={styles.messages} id="messages">
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={msg.type === 'question' ? styles.userBubble : styles.botBubble}
-                    dangerouslySetInnerHTML={renderMarkdown(msg.text)}
+                </div>
+                <div style={styles.messages} id="messages">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      style={
+                        msg.type === "question"
+                          ? styles.userBubble
+                          : styles.botBubble
+                      }
+                      dangerouslySetInnerHTML={renderMarkdown(msg.text)}
+                    />
+                  ))}
+                  <div ref={messagesEndRef} />
+                  {isTyping && (
+                    <div style={styles.typingIndicator}>
+                      Assistant is typing...
+                    </div>
+                  )}
+                </div>
+                <div style={styles.inputContainer}>
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Type your message here"
+                    style={styles.input}
                   />
-                ))}
-                <div ref={messagesEndRef} />
-                {isTyping && (
-                  <div style={styles.typingIndicator}>Assistant is typing...</div>
-                )}
-              </div>
-              <div style={styles.inputContainer}>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Type your message here"
-                  style={styles.input}
-                />
-                <button onClick={handleSendMessage} style={styles.button}>
-                  Send
-                </button>
-                <RefreshButton />
+                  <button onClick={handleSendMessage} style={styles.button}>
+                    Send
+                  </button>
+                  <RefreshButton />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </div>{" "}
     </div>
-  </div>
   );
 };
-// Styles Object
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  imageContainer: {
-    flex: 1,
-    padding: '4px',
-    marginRight: '0px', // Space between the image and chatbot
-  },
-  chatContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'top',
-  },
-  container: {
-    width: '600px',
-    marginTop: '20px',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: 'Arial, sans-serif',
-    position: 'relative',
-  },
-  header: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    backgroundColor: '#C1E3C6',
-    padding: '10px',
-  },
-  messages: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: '10px',
-    backgroundColor: '#fff',
-  },
-  typingIndicator: {
-    color: '#888',
-    fontStyle: 'italic',
-    margin: '10px 0',
-    textAlign: 'center',
-  },
-  inputContainer: {
-    display: 'flex',
-    padding: '10px',
-    borderTop: '1px solid #eee',
-    backgroundColor: '#f7f7f7',
-  },
-  bgStyle: {
-    minHeight: '80vh',
-    display: 'flex',
-    background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
-    backgroundSize: '30%', // Adjust size of gradient
-  },
-  input: {
-    flex: 1,
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginRight: '10px',
-  },
-  button: {
-    padding: '8px 15px',
-    border: 'none',
-    backgroundColor: '#4082bf',
-    color: '#fff',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  userBubble: {
-    backgroundColor: '#C1E3C6',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-end',
-    maxWidth: '80%',
-  },
-  botBubble: {
-    backgroundColor: '#f1f0f0',
-    borderRadius: '8px',
-    padding: '10px',
-    margin: '5px 0',
-    alignSelf: 'flex-start',
-    maxWidth: '80%',
-  },
-  // New styles for the sidebar and hamburger menu
-  sidebar: {
-    height: '100%', 
-    width: '0', // Initial width is 0
-    position: 'fixed', 
-    top: 0, 
-    left: 0, 
-    backgroundColor: '#111', 
-    overflowX: 'hidden', 
-    transition: '0.5s', 
-    paddingTop: '60px',
-    zIndex: 1000,
-  },
-  sidebarLink: {
-    padding: '8px 8px 8px 32px',
-    textDecoration: 'none',
-    fontSize: '25px',
-    color: '#818181',
-    display: 'block',
-    transition: '0.3s',
-  },
-  closeBtn: {
-    position: 'absolute',
-    top: '20px',
-    right: '25px',
-    fontSize: '36px',
-    marginLeft: '50px',
-    background: 'none',
-    border: 'none',
-    color: '#fff',
-    cursor: 'pointer',
-  },
-  hamburgerBtn: {
-    fontSize: '30px',
-    cursor: 'pointer',
-    background: 'none',
-    border: 'none',
-    color: '#fff',
-    padding: '10px',
-  },
-  headerWithMenu: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: '#C1E3C6',
-    padding: '10px',
-    position: 'relative',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'left',
-  },
-  headerLink: {
-    color: 'darkred',
-    marginLeft: '20px',
-  },
-};
+
 
 
 export default ChatbotL;

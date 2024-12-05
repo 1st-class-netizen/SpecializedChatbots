@@ -1,7 +1,5 @@
 // Chatbot.tsx
 
-import React, { useEffect, useRef, useState } from 'react';
-import { marked } from 'marked';
 
 // Interface for chat messages
 interface ChatMessage {
@@ -176,7 +174,7 @@ class ChatApp {
 // Chatbot component
 const ChatbotL: React.FC = () => {
 
-  return (<div style={{ backgroundColor: '#C1E3C6'}}>
+  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px'}}>
     <h1>
       <a style={{ color: 'darkred', marginRight: '10px' }}>
         Language Site

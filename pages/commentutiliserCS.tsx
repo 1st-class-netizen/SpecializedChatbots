@@ -1,8 +1,5 @@
 // Chatbot.tsx
 
-import React, { useEffect, useRef, useState } from 'react';
-import { marked } from 'marked';
-
 // Interface for chat messages
 interface ChatMessage {
   type: 'question' | 'response';
