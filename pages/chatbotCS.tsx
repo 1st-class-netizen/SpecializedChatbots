@@ -8,7 +8,6 @@ interface ChatMessage {
   type: "question" | "response";
   text: string;
 }
-
 interface ImageWithCaptionProps {
   imageUrl: string;
   caption: string;

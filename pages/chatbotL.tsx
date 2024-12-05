@@ -8,11 +8,14 @@ interface ChatMessage {
   type: 'question' | 'response';
   text: string;
 }
-
+interface ImageWithCaptionProps {
+  imageUrl: string;
+  caption: string;
+  altText: string;
+}
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
     if (typeof window !== "undefined") {
-
     window.location.reload(); // This refreshes the page
   }
   };
@@ -492,7 +495,7 @@ useEffect(() => {
 >
       <div style={styles.wrapper}>
         <div style={styles.imageContainer}>
-          <ImageWithCaption 
+          <ImageWithCaption
             imageUrl={'/cuneiform-tablet-assyria-905.jpg'} 
             altText={'A clay tablet with cuneiform'}
             caption={'A clay tablet with cuneiform from an Assyrian trading post, c. 1875-1840 BCE. (Los Angeles County Museum of Art, L.A.)'} 
