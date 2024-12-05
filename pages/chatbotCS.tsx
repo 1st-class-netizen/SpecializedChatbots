@@ -422,7 +422,7 @@ const ChatbotCS: React.FC = () => {
           onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
           onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
         >
-          Languages Site
+          Languagtghs Site
         </a>
         <a 
           href="https://cybercap.qc.ca/" 
