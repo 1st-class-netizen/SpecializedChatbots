@@ -419,7 +419,7 @@ const ChatbotCS: React.FC = () => {
           onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
           onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
         >
-          Language Site
+          Languages Site
         </a>
         <a 
           href="https://cybercap.qc.ca/" 
@@ -429,7 +429,7 @@ const ChatbotCS: React.FC = () => {
         >
           CyberCap
         </a>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px',verticalAlign: 'bottom' }}  >
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
         <h1>By Sam</h1>
           </div>
       </div>
