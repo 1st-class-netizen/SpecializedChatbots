@@ -226,7 +226,7 @@ const ChatbotL: React.FC = () => {
     return { __html: html };
   };
 
-  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
+  return (<div style={{ backgroundColor: '#C1E3C6'}}>
 
     {/* Sidebar */}
     <div

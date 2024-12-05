@@ -176,7 +176,7 @@ class ChatApp {
 // Chatbot component
 const ChatbotL: React.FC = () => {
 
-  return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
+  return (<div style={{ backgroundColor: '#C1E3C6'}}>
     <h1>
       <a style={{ color: 'darkred', marginRight: '10px' }}>
         Language Site
