@@ -108,7 +108,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#f7f7f7',
   },
   bgStyle: {
-    minHeight: '85.87vh',
+    minHeight: '100vh',
     display: 'flex',
     background: 'linear-gradient(90deg, #9e9e9e 25%, #b0b0b0 25%, #b0b0b0 50%, #9e9e9e 50%, #9e9e9e 75%, #b0b0b0 75%)',
     backgroundSize: '30%', // Adjust size of gradient
@@ -188,7 +188,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     backgroundColor: '#E3D7C1',
-    padding: '10px',
     position: 'relative',
   },
   headerTitle: {
@@ -396,7 +395,7 @@ const ChatbotCS: React.FC = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#E3D7C1', padding: '10px' }}>
+    <div style={{ backgroundColor: '#E3D7C1', padding: '10px'}}>
 
 
 
@@ -405,9 +404,10 @@ const ChatbotCS: React.FC = () => {
         style={{
           ...styles.sidebar,
           width: sidebarOpen ? '250px' : '0',
-
+          flexDirection: 'column',  // Arrange children in a column
+          height: '100vh',          // Full viewport height
     display: 'flex',          // Add flexbox
-    flexDirection: 'column',  // Arrange children in a column
+
         }}
       >
         <button style={styles.closeBtn} onClick={closeSidebar}>
@@ -422,7 +422,7 @@ const ChatbotCS: React.FC = () => {
           onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
           onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
         >
-          Languagtghs Site
+          Language Site
         </a>
         <a 
           href="https://cybercap.qc.ca/" 
@@ -432,8 +432,8 @@ const ChatbotCS: React.FC = () => {
         >
           CyberCap
         </a>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px', marginTop: 'auto', }}  >
-        <h1>By Sam</h1>
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px', marginTop: '75vh', }}  >
+        <h3>By Sam</h3>
           </div>
       </div>
 
