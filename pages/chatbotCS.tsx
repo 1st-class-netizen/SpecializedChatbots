@@ -405,6 +405,8 @@ const ChatbotCS: React.FC = () => {
         style={{
           ...styles.sidebar,
           width: sidebarOpen ? '250px' : '0',
+          display: 'flex',          // Add flexbox
+    flexDirection: 'column',  // Arrange children in a column
         }}
       >
         <button style={styles.closeBtn} onClick={closeSidebar}>
@@ -429,7 +431,7 @@ const ChatbotCS: React.FC = () => {
         >
           CyberCap
         </a>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px',marginBottom: 'auto' }}  >
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px', marginTop: 'auto',}}  >
         By Sam
           </div>
       </div>
