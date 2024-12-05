@@ -429,7 +429,7 @@ const ChatbotCS: React.FC = () => {
         >
           CyberCap
         </a>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px',verticalAlign: 'text-bottom' }}  >
+        <div style={{ color: 'white', padding: '8px 8px 8px 32px',justifySelf: 'bottom' }}  >
         By Sam
           </div>
       </div>
