@@ -280,7 +280,7 @@ const ChatbotCS: React.FC = () => {
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
             altText={'A question mark'}
-            caption={'To use the cybersecurity exercise chatbot, prepare by refreshing your memory on a glossary of cybersecurity terms and test your memory by follow the chatbot\'s instructions to complete the cybersecurity exercise. You may also do this preparation by showing intent do so in response to one of the chatbot\'s questions.'} 
+            caption={'To use the cybersecurity exercise chatbot, prepare by refreshing your memory on a glossary of cybersecurity terms and test your memory by following the chatbot\'s instructions to complete the cybersecurity exercise. You may also do this preparation by showing intent do so in response to one of the chatbot\'s questions.'} 
           />
         </div>
         </div>

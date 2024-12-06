@@ -132,7 +132,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
   },
   userBubble: {
-    backgroundColor: "#E3D7C1",
+    backgroundColor: "#C1E3C6",
     borderRadius: "8px",
     padding: "10px",
     margin: "5px 0",
@@ -315,23 +315,25 @@ const ChatbotL: React.FC = () => {
   const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
 
-  const initialHeight =
-  typeof window !== "undefined" ? window.innerHeight : 940; // fallback if SSR
-const [height, setHeight] = useState<number>(initialHeight);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Function to update the height
+      const handleResize = () => {
+        setHeight(window.innerHeight);
+      };
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const handleResize = () => {
-      setHeight(window.innerHeight);
-    };
+      // Set initial height when the component mounts
+      handleResize();
 
-    window.addEventListener("resize", handleResize);
+      // Add event listener for resizing
+      window.addEventListener("resize", handleResize);
 
-    // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }
-}, []);
+      // Cleanup on unmount
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);

@@ -240,7 +240,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   header: {
     fontWeight: 'bold',
     textAlign: 'center',
-    backgroundColor: '#9ED3A6',
+    backgroundColor: '#C1E3C6',
     padding: '10px',
   },
   messages: {

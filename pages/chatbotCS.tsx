@@ -316,23 +316,26 @@ const ChatbotCS: React.FC = () => {
   const [pageRefresh, setPageRefresh] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const initialHeight =
-    typeof window !== "undefined" ? window.innerHeight : 940; // fallback if SSR
-  const [height, setHeight] = useState<number>(initialHeight);
+  const [height, setHeight] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Function to update the height
       const handleResize = () => {
         setHeight(window.innerHeight);
       };
 
+      // Set initial height when the component mounts
+      handleResize();
+
+      // Add event listener for resizing
       window.addEventListener("resize", handleResize);
 
-      // Cleanup
+      // Cleanup on unmount
       return () => window.removeEventListener("resize", handleResize);
     }
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
 
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
