@@ -1,11 +1,11 @@
 // Chatbot.tsx
 
-import React, { useEffect, useRef, useState } from 'react';
-import { marked } from 'marked';
+import React, { useEffect, useRef, useState } from "react";
+import { marked } from "marked";
 
 // Interface for chat messages
 interface ChatMessage {
-  type: 'question' | 'response';
+  type: "question" | "response";
   text: string;
 }
 interface ImageWithCaptionProps {
@@ -13,19 +13,23 @@ interface ImageWithCaptionProps {
   caption: string;
   altText: string;
 }
+
 const RefreshButton: React.FC = () => {
   const handleRefresh = () => {
     if (typeof window !== "undefined") {
-    window.location.reload(); // This refreshes the page
-  }
+      window.location.reload(); // This refreshes the page
+    }
   };
 
   return (
-    <button onClick={handleRefresh} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
-      <img 
-        src="/85272_refresh_icon.png" 
-        alt="Refresh" 
-        style={{ width: '50px', height: '50px' }} // Adjust the size of the image as needed
+    <button
+      onClick={handleRefresh}
+      style={{ border: "none", background: "transparent", cursor: "pointer" }}
+    >
+      <img
+        src="/85272_refresh_icon.png"
+        alt="Refresh"
+        style={{ width: "50px", height: "50px" }} // Adjust the size of the image as needed
       />
     </button>
   );
@@ -61,7 +65,6 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({
     </figure>
   );
 };
-
 
 // Styles Object
 const styles: { [key: string]: React.CSSProperties } = {
@@ -139,14 +142,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: "flex-end",
     maxWidth: "80%",
   },
-  botBubble: {
-    backgroundColor: "#f1f0f0",
-    borderRadius: "8px",
-    padding: "10px",
-    margin: "5px 0",
-    alignSelf: "flex-start",
-    maxWidth: "80%",
-  },
+
   sidebarLink: {
     padding: "8px 8px 8px 32px",
     textDecoration: "none",
@@ -194,7 +190,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-
 // Chat application logic
 class ChatApp {
   descriptionL: string;
@@ -202,34 +197,34 @@ class ChatApp {
   apiUrl: string;
 
   constructor() {
-    this.descriptionL = '';
+    this.descriptionL = "";
     this.apiKey = process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY; // Replace with your actual API key
     this.apiUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent';
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent";
   }
 
   async fetchdescriptionL(): Promise<void> {
     try {
-      const response = await fetch('/descriptionL.txt');
+      const response = await fetch("/descriptionL.txt");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       this.descriptionL = await response.text();
-      console.log('descriptionL loaded:', this.descriptionL);
+      console.log("descriptionL loaded:", this.descriptionL);
     } catch (err) {
-      console.error('Failed to load descriptionL:', err);
+      console.error("Failed to load descriptionL:", err);
     }
   }
 
   // Helper method to escape special characters
   escapeString(str: string): string {
     return str
-      .replace(/\\/g, '\\\\')
+      .replace(/\\/g, "\\\\")
       .replace(/"/g, '\\"')
       .replace(/'/g, "\\'")
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t');
+      .replace(/\n/g, "\\n")
+      .replace(/\r/g, "\\r")
+      .replace(/\t/g, "\\t");
   }
 
   async sendMessage(
@@ -238,7 +233,7 @@ class ChatApp {
   ): Promise<string> {
     const contents = conversationHistory.flatMap((message) => [
       {
-        role: message.type === 'question' ? 'user' : 'model',
+        role: message.type === "question" ? "user" : "model",
         parts: [
           {
             text: message.text,
@@ -248,7 +243,7 @@ class ChatApp {
     ]);
 
     contents.push({
-      role: 'user',
+      role: "user",
       parts: [
         {
           text: inputText,
@@ -259,10 +254,10 @@ class ChatApp {
     const requestBody = {
       contents: contents,
       systemInstruction: {
-        role: 'user',
+        role: "user",
         parts: [
           {
-            text: this.descriptionL || 'Default system instruction here',
+            text: this.descriptionL || "Default system instruction here",
           },
         ],
       },
@@ -271,19 +266,19 @@ class ChatApp {
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 8192,
-        responseMimeType: 'text/plain',
+        responseMimeType: "text/plain",
       },
     };
 
     try {
       const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
-      console.log('API response:', data);
+      console.log("API response:", data);
 
       if (
         !data.candidates ||
@@ -291,15 +286,15 @@ class ChatApp {
         !data.candidates[0].content ||
         !data.candidates[0].content.parts
       ) {
-        throw new Error('Invalid API response structure');
+        throw new Error("Invalid API response structure");
       }
 
       return data.candidates[0].content.parts
         .map((part: any) => part.text)
         .join(" ");
     } catch (error) {
-      console.error('Error:', error);
-      return 'Error fetching response';
+      console.error("Error:", error);
+      return "Error fetching response";
     }
   }
 }
@@ -312,10 +307,11 @@ const ChatbotL: React.FC = () => {
     []
   );
   const [chatApp, setChatApp] = useState<ChatApp | null>(null);
-  const [pageRefresh, setPageRefresh] = useState<boolean>(false);
+  const [lightFlag, setLight] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const col1 = lightFlag ? "#f1f0f0" : "#A6A2A2";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -346,15 +342,8 @@ const ChatbotL: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    if (pageRefresh && typeof window !== "undefined") {
-      window.location.reload();
-    }
-  }, [pageRefresh]);
-
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== "") {
@@ -383,17 +372,17 @@ const ChatbotL: React.FC = () => {
         ]);
         setIsTyping(false);
 
-        if (responseText.includes("ZXC")) {
-          setPageRefresh(true);
+        if (responseText.includes("🔎")) {
+          setLight(true);
         } else {
-          setPageRefresh(false);
+          setLight(false);
         }
       }
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -415,8 +404,8 @@ const ChatbotL: React.FC = () => {
       style={{
         backgroundColor: "#C1E3C6",
       }}
-      >
-        {/* Sidebar */}
+    >
+      {/* Sidebar */}
       <div
         style={{
           height: height - 60,
@@ -436,22 +425,22 @@ const ChatbotL: React.FC = () => {
         <button style={styles.closeBtn} onClick={closeSidebar}>
           &times;
         </button>
-        <div style={{ color: 'white', padding: '8px 8px 8px 32px' }}  >
-        <h1>Related Links</h1>
-          </div>
-        <a 
-          href="/chatbotCS" 
-          style={styles.sidebarLink} 
-          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
-          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        <div style={{ color: "white", padding: "8px 8px 8px 32px" }}>
+          <h1>Related Links</h1>
+        </div>
+        <a
+          href="/chatbotCS"
+          style={styles.sidebarLink}
+          onMouseOver={(e) => (e.currentTarget.style.color = "#f1f1f1")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "#818181")}
         >
           Cybersecurity Site
         </a>
-        <a 
-          href="https://cybercap.qc.ca/" 
-          style={styles.sidebarLink} 
-          onMouseOver={(e) => (e.currentTarget.style.color = '#f1f1f1')}
-          onMouseOut={(e) => (e.currentTarget.style.color = '#818181')}
+        <a
+          href="https://cybercap.qc.ca/"
+          style={styles.sidebarLink}
+          onMouseOver={(e) => (e.currentTarget.style.color = "#f1f1f1")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "#818181")}
         >
           CyberCap
         </a>
@@ -486,31 +475,33 @@ const ChatbotL: React.FC = () => {
             </a>
           </h1>
         </div>
-    <div
-  style={{
-    background: 'linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)',
-    minHeight: height-140,
-    display: 'flex',
-    alignItems: 'normal',
-    justifyContent: 'left',
-  }}
->
-      <div style={styles.wrapper}>
-        <div style={styles.imageContainer}>
-          <ImageWithCaption
-            imageUrl={'/cuneiform-tablet-assyria-905.jpg'} 
-            altText={'A clay tablet with cuneiform'}
-            caption={'A clay tablet with cuneiform from an Assyrian trading post, c. 1875-1840 BCE. (Los Angeles County Museum of Art, L.A.)'} 
-          />
-        </div>
-        </div>
-        {/* Chatbot on the right */}
-        <div style={styles.chatContainer}>
-          
-          <div className="App">
-            <div style={styles.container}>
-              <div style={styles.header}>
-                <span>Language Exercise Chatbot Assistant</span>
+        <div
+          style={{
+            background:
+              "linear-gradient(45deg, brown 25%, orange 25%, orange 50%, brown 50%, brown 75%, orange 75%)",
+            minHeight: height - 140,
+            display: "flex",
+            alignItems: "normal",
+            justifyContent: "left",
+          }}
+        >
+          <div style={styles.wrapper}>
+            <div style={styles.imageContainer}>
+              <ImageWithCaption
+                imageUrl={"/cuneiform-tablet-assyria-905.jpg"}
+                altText={"A clay tablet with cuneiform"}
+                caption={
+                  "A clay tablet with cuneiform from an Assyrian trading post, c. 1875-1840 BCE. (Los Angeles County Museum of Art, L.A.)"
+                }
+              />
+            </div>
+          </div>
+          {/* Chatbot on the right */}
+          <div style={styles.chatContainer}>
+            <div className="App">
+              <div style={styles.container}>
+                <div style={styles.header}>
+                  <span>Language Exercise Chatbot Assistant</span>
                 </div>
                 <div style={styles.messages} id="messages">
                   {messages.map((msg, index) => (
@@ -519,7 +510,19 @@ const ChatbotL: React.FC = () => {
                       style={
                         msg.type === "question"
                           ? styles.userBubble
-                          : styles.botBubble
+                          : {
+                              background:
+                                "linear-gradient(to bottom, " +
+                                col1 +
+                                " 0px," +
+                                col1 +
+                                " 40px, #f1f0f0 60px, #f1f0f0)",
+                              borderRadius: "8px",
+                              padding: "10px",
+                              margin: "5px 0",
+                              alignSelf: "flex-start",
+                              maxWidth: "80%",
+                            }
                       }
                       dangerouslySetInnerHTML={renderMarkdown(msg.text)}
                     />
@@ -553,7 +556,5 @@ const ChatbotL: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default ChatbotL;
