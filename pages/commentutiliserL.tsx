@@ -27,6 +27,7 @@ interface ImageWithCaptionProps {
   imageUrl: string;
   caption: string;
   altText: string;
+
 }
 const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, altText }) => {
   return (
@@ -57,7 +58,13 @@ const ImageWithCaption: React.FC<ImageWithCaptionProps> = ({ imageUrl, caption, 
         }}
       >
         {caption}
-      </figcaption>
+      
+ {/* Static Bullet Points */}
+ <ul style={{ marginTop: '10px',   listStyleType: 'none', paddingLeft: '20px', fontFamily: 'Arial, sans-serif', fontSize: '16pt' }}>
+        <li>🔎 An identical etymological root is certain to exist</li>
+        <li>🕯️ Said root is uncertain or the two lexemes have a purely semantic common ground</li>
+        <li>🥀 Neither exist</li>
+      </ul></figcaption>
     </figure>
   );
 };
@@ -173,7 +180,11 @@ class ChatApp {
 
 // Chatbot component
 const ChatbotL: React.FC = () => {
-
+  const bulletPoints = [
+    'Understand the structure of lexemes.',
+    'Derive lexemes from given words.',
+    'Explore the etymological connections.'
+  ];
   return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px'}}>
     <h1>
       <a style={{ color: 'darkred', marginRight: '10px' }}>
@@ -199,9 +210,10 @@ const ChatbotL: React.FC = () => {
           <ImageWithCaption 
             imageUrl={'/Question-mark-image-4.webp'} 
             altText={'A question mark'}
-            caption={'To use the language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word X and the word Y".'} 
+            caption={'To use the language exercise chatbot, write two words and it will derive their lexemes (Wikipedia.org: A lexeme (/ˈlɛksiːm/ ) is a unit of lexical meaning that underlies a set of words that are related through inflection. It is a basic abstract unit of meaning, a unit of morphological analysis in linguistics that roughly corresponds to a set of forms taken by a single root word. For example, in the English language, run, runs, ran and running are forms of the same lexeme, which can be represented as RUN.) and attempt to return an explanation of their etymological common ground. Follow the chatbot\'s instructions to complete the language exercise, however if the chatbot doesn\'t parse properly, try "The word \'X\' and the word \'Y\'". Etymological connection strength legend:'}
           />
         </div>
+        
         </div>
         {/* Chatbot on the right */}
         
