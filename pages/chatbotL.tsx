@@ -311,7 +311,6 @@ const ChatbotL: React.FC = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
-  const col1 = lightFlag ? "#f1f0f0" : "#A6A2A2";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -513,9 +512,9 @@ const ChatbotL: React.FC = () => {
                           : {
                               background:
                                 "linear-gradient(to bottom, " +
-                                col1 +
+                                (lightFlag ? "#f1f0f0" : "#A6A2A2") +
                                 " 0px," +
-                                col1 +
+                                (lightFlag ? "#f1f0f0" : "#A6A2A2") +
                                 " 40px, #f1f0f0 60px, #f1f0f0)",
                               borderRadius: "8px",
                               padding: "10px",
