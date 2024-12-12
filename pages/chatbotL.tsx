@@ -302,7 +302,6 @@ class ChatApp {
 // Chatbot component
 const ChatbotL: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
   const [conversationHistory, setConversationHistory] = useState<ChatMessage[]>(
     []
   );
@@ -311,6 +310,14 @@ const ChatbotL: React.FC = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+
+  const processInputs = (input1: string, input2: string): string => {
+    // Process the inputs and return the result
+    return `First word: "${input1}". Second word: "${input2}".`; // Example of combining both inputs
+  };
+
+  const [inputValue1, setInputValue1] = useState<string>("");
+  const [inputValue2, setInputValue2] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -345,36 +352,60 @@ const ChatbotL: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (inputValue.trim() !== "") {
+    if (inputValue1.trim() !== "" && inputValue2.trim() !== "") {
+      // Combine the inputs
+      const newInputValue = processInputs(inputValue1, inputValue2);
+
+      // Create the new user message
       const newUserMessage: ChatMessage = {
         type: "question",
-        text: inputValue,
+        text: newInputValue,
       };
+      // Update messages and conversation history before clearing inputs
       setMessages((prevMessages) => [...prevMessages, newUserMessage]);
       setConversationHistory((prevHistory) => [...prevHistory, newUserMessage]);
-      setInputValue("");
+
+      // Update typing state
+      setIsTyping(true);
 
       if (chatApp) {
-        setIsTyping(true);
-        const responseText = await chatApp.sendMessage(inputValue, [
-          ...conversationHistory,
-          newUserMessage,
-        ]);
-        const newBotMessage: ChatMessage = {
-          type: "response",
-          text: responseText,
-        };
-        setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-        setConversationHistory((prevHistory) => [
-          ...prevHistory,
-          newBotMessage,
-        ]);
-        setIsTyping(false);
+        try {
+          const responseText = await chatApp.sendMessage(newInputValue, [
+            ...conversationHistory, // Ensure this uses the latest history
+            newUserMessage,
+          ]);
 
-        if (responseText.includes("🔎")) {
-          setLight(true);
-        } else {
-          setLight(false);
+          // Create the bot response message
+          const newBotMessage: ChatMessage = {
+            type: "response",
+            text: responseText,
+          };
+
+          // Update messages with the bot's response
+          setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+
+          // Update conversation history with the bot's response
+          setConversationHistory((prevHistory) => [
+            ...prevHistory,
+            newBotMessage,
+          ]);
+
+          // Set typing state to false once done
+          setIsTyping(false);
+
+          // Handle light mode condition
+          if (responseText.includes("🔎")) {
+            setLight(true);
+          } else {
+            setLight(false);
+          }
+
+          // Clear both input fields after the message is sent and processed
+          setInputValue1(""); // Clear first input
+          setInputValue2(""); // Clear second input
+        } catch (error) {
+          console.error("Error sending message:", error);
+          setIsTyping(false);
         }
       }
     }
@@ -536,12 +567,22 @@ const ChatbotL: React.FC = () => {
                 <div style={styles.inputContainer}>
                   <input
                     type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    value={inputValue1}
+                    onChange={(e) => setInputValue1(e.target.value)}
+                    placeholder="Word one"
                     onKeyDown={handleKeyPress}
-                    placeholder="Type your message here"
                     style={styles.input}
                   />
+
+                  <input
+                    type="text"
+                    value={inputValue2}
+                    onChange={(e) => setInputValue2(e.target.value)}
+                    placeholder="Word two"
+                    onKeyDown={handleKeyPress}
+                    style={styles.input}
+                  />
+
                   <button onClick={handleSendMessage} style={styles.button}>
                     Send
                   </button>
