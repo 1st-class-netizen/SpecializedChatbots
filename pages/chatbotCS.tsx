@@ -208,7 +208,7 @@ class ChatApp {
     this.descriptionL = "";
     this.apiKey = process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;
     this.apiUrl =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent";
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
   }
 
   async fetchdescriptionL(): Promise<void> {
@@ -268,7 +268,7 @@ class ChatApp {
         ],
       },
       generationConfig: {
-        temperature: 1,
+        temperature: 0.3,
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 8192,
@@ -336,7 +336,6 @@ const ChatbotCS: React.FC = () => {
     }
   }, []); // Empty dependency array ensures this runs only once on mount
 
-
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
@@ -384,7 +383,7 @@ const ChatbotCS: React.FC = () => {
         ]);
         setIsTyping(false);
 
-        if (responseText.includes("ZXC")) {
+        if (responseText.includes("○")) {
           setPageRefresh(true);
         } else {
           setPageRefresh(false);

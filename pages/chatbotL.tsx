@@ -262,7 +262,7 @@ class ChatApp {
         ],
       },
       generationConfig: {
-        temperature: 1,
+        temperature: 0.8,
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 8192,
@@ -313,7 +313,7 @@ const ChatbotL: React.FC = () => {
 
   const processInputs = (input1: string, input2: string): string => {
     // Process the inputs and return the result
-    return `First word: "${input1}". Second word: "${input2}".`; // Example of combining both inputs
+    return `First word: ${input1} - Second word: ${input2}`; // Example of combining both inputs
   };
 
   const [inputValue1, setInputValue1] = useState<string>("");
@@ -546,7 +546,7 @@ const ChatbotL: React.FC = () => {
                                 (lightFlag ? "#f1f0f0" : "#A6A2A2") +
                                 " 0px," +
                                 (lightFlag ? "#f1f0f0" : "#A6A2A2") +
-                                " 40px, #f1f0f0 60px, #f1f0f0)",
+                                " 52px, #f1f0f0 56px, #f1f0f0)",
                               borderRadius: "8px",
                               padding: "10px",
                               margin: "5px 0",
