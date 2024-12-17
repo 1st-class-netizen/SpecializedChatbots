@@ -439,7 +439,7 @@ const ChatbotCS: React.FC = () => {
           &times;
         </button>
         <div style={{ color: "white", padding: "8px 8px 8px 32px" }}>
-          <h1>Related Links</h1>
+          <h1>Related links</h1>
         </div>
         <a
           href="/chatbotL"
@@ -447,7 +447,7 @@ const ChatbotCS: React.FC = () => {
           onMouseOver={(e) => (e.currentTarget.style.color = "#f1f1f1")}
           onMouseOut={(e) => (e.currentTarget.style.color = "#818181")}
         >
-          Language Site
+          Language website
         </a>
         <a
           href="https://cybercap.qc.ca/"
@@ -512,7 +512,7 @@ const ChatbotCS: React.FC = () => {
             <div className="App">
               <div style={styles.container}>
                 <div style={styles.header}>
-                  <span>Cybersecurity Exercise Chatbot Assistant</span>
+                  <span>Cybersecurity exercise chatbot assistant</span>
                 </div>
                 <div style={styles.messages} id="messages">
                   {messages.map((msg, index) => (
