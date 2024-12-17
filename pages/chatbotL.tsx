@@ -501,7 +501,7 @@ const ChatbotL: React.FC = () => {
           <h1>
             <span style={styles.headerLink}>Language Website</span>
             <a href="/commentutiliserL" style={styles.headerLink}>
-              How to use
+              How to Use
             </a>
           </h1>
         </div>

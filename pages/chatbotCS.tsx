@@ -484,7 +484,7 @@ const ChatbotCS: React.FC = () => {
           <h1>
             <span style={styles.headerLink}>Cybersecurity Website</span>
             <a href="/commentutiliserCS" style={styles.headerLink}>
-              How to use
+              How to Use
             </a>
           </h1>
         </div>
