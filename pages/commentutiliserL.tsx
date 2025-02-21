@@ -179,7 +179,7 @@ const ChatbotL: React.FC = () => {
   return (<div style={{ backgroundColor: '#C1E3C6', padding: '10px' }}>
     <h1>
       <a style={{ color: 'darkred', marginRight: '10px' }}>
-        Language Site
+        Language Website
       </a>
       <a href="/chatbotL" style={{ color: 'darkred', marginRight: '10px' }}>
         Back
