@@ -266,7 +266,7 @@ const ChatbotCS: React.FC = () => {
     
     <h1>
       <a style={{ color: 'midnightblue', marginRight: '10px' }}>
-        Cybersecurity Site
+        Cybersecurity Website
       </a>
       <a href="/chatbotCS" style={{ color: 'midnightblue', marginRight: '10px' }}>
         Back
