@@ -142,7 +142,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignSelf: "flex-end",
     maxWidth: "80%",
   },
-
   sidebarLink: {
     padding: "8px 8px 8px 32px",
     textDecoration: "none",
@@ -546,7 +545,7 @@ const ChatbotL: React.FC = () => {
                                 (lightFlag ? "#f1f0f0" : "#A6A2A2") +
                                 " 0px," +
                                 (lightFlag ? "#f1f0f0" : "#A6A2A2") +
-                                " 38px, #f1f0f0 42px, #f1f0f0)",
+                                " 48px, #f1f0f0 52px, #f1f0f0)",
                               borderRadius: "8px",
                               padding: "10px",
                               margin: "5px 0",
