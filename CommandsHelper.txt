@@ -1,0 +1,6 @@
+npm install @mui/material @emotion/react @emotion/styled axios
+npm install react-router-dom@6
+npm install express sequelize sqlite3 body-parser cors
+npm run build
+node server.js
+npm run dev
